@@ -157,7 +157,7 @@ Before each release:
 4. Check `dist/sitemap.xml`, `dist/robots.txt`, canonical URLs, author/date metadata and draft exclusions.
 5. Obtain approval before committing/pushing/deploying. Deploy only the generated `dist`.
 
-Published works, issues, contributor pages and About have canonical URLs and no indexing prohibition. Article/artwork, issue and About structured data use supplied content; no prose is synthesized. The sitemap uses the same publication gate and omits drafts and legal drafts. A genuine 404 page prevents nonexistent work URLs from falling back to the homepage on Cloudflare Pages.
+Published works, issues, contributor pages and About have canonical URLs and no indexing prohibition. Article/artwork, issue and About structured data use supplied content; no prose is synthesized. The sitemap uses the same publication gate and omits drafts and legal drafts. Cloudflare Workers serves the generated 404 page for nonexistent work URLs using `assets.not_found_handling: '404-page'` in `wrangler.jsonc`; see [deployment instructions](DEPLOYMENT.md).
 
 After an approved public deployment, the operator can verify the domain in Google Search Console and submit `https://glosso.org/sitemap.xml`. Being crawlable does not guarantee Google indexing. Actual live accessibility and Search Console verification cannot be checked before deployment.
 

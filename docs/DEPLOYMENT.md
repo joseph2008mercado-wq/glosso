@@ -1,75 +1,85 @@
-# Cloudflare Pages deployment runbook — NOT EXECUTED
+# Cloudflare Workers static deployment runbook
 
-Prepared 2026-09-23. No push, branch change, account creation, analytics activation, DNS change or deployment is authorized by this document. Preserve the visual design and editorial policy.
+Updated 2026-09-26. Hosting target: the existing `glosso` Worker, not a new Cloudflare Pages project. This runbook does not approve public release, legal text, analytics activation or DNS changes. Use [FINAL_LAUNCH_CHECKLIST.md](FINAL_LAUNCH_CHECKLIST.md) for outstanding approvals.
 
-Status update 2026-09-24: use `FINAL_LAUNCH_CHECKLIST.md` as the single current approval checklist. The operator confirmed adults-only international submissions, no registered business, mailing list or monetization, and the nonexclusive worldwide contributor arrangement. Do not add a guardian-intake or ecommerce workflow. The revised private legal packet does not approve the old public legal routes.
+## Repository and static configuration
 
-## Verified project and repository state
+- Existing repository: `https://github.com/joseph2008mercado-wq/glosso.git`; production branch: `main`. The repository is populated; the earlier empty-repository/first-push instructions are obsolete. Recheck remote state before every release; never force-push over it.
+- Astro 5 and MDX generate static files in `dist/`. Keep `output: 'static'`, canonical origin `https://glosso.org` and trailing-slash routes. No server-side rendering, Cloudflare Astro adapter or Worker JavaScript entry point is required.
+- Root `wrangler.jsonc` names `glosso`, sets compatibility date `2026-09-26`, points assets to `./dist`, and uses `not_found_handling: '404-page'`. This supplies explicit configuration so deployment need not auto-configure Astro. Missing routes should serve the generated `404.html` with HTTP 404, not a homepage fallback.
+- Cloudflare account settings, build commands, zone ownership, DNS, credentials and live deployment are not verified by the repository. A configuration file is not evidence of an active service.
 
-- Astro 5 static build with MDX; canonical origin `https://glosso.org`, trailing slashes, output `dist/`. No Cloudflare adapter, Functions, database or runtime secrets needed by current code.
-- Existing origin: `https://github.com/joseph2008mercado-wq/glosso.git`.
-- GitHub connector: repository visibility **public**, default branch metadata **main**, branch list empty at audit time. No populated remote branch was found.
-- Local branch **master**, no commits, no tracked/staged files. A remote URL is not evidence of a push.
-- Local Git HTTPS transport failed because `git-remote-https` was unavailable. Connector read-only checks succeeded; fix the local Git installation/exec-path before trying a push. Do not work around this with a new repository or overwrite remote history.
-- Cloudflare account, Pages project, zone, registrar/DNS and live domain are **unverified**. No Cloudflare resources or credential files were configured by this work. Source absence cannot rule out a separately configured account.
+Cloudflare documents [static Astro deployment without an adapter](https://developers.cloudflare.com/workers/framework-guides/web-apps/astro/) and [static-site asset routing](https://developers.cloudflare.com/workers/static-assets/routing/static-site-generation/).
 
-## Required build configuration
+## Required Workers Builds settings
 
-Cloudflare supports Astro static output. Keep the current framework and routes. [Astro on Pages](https://developers.cloudflare.com/pages/framework-guides/deploy-an-astro-site/).
+In Cloudflare **Workers & Pages → glosso → Settings → Builds**, inspect the existing Git connection. Use the existing GitHub repository; do not create a replacement repository or Pages project. The dashboard Worker name must match `glosso` in Wrangler.
 
 | Setting | Required value |
 | --- | --- |
-| Existing GitHub repository | `joseph2008mercado-wq/glosso` |
-| Production branch | `main`, after owner-approved initial publication/reconciliation |
-| Root directory | Repository root; no subdirectory |
-| Framework preset | Astro |
+| GitHub repository | `joseph2008mercado-wq/glosso` |
+| Production branch | `main` |
+| Root directory | Repository root |
 | Build command | `pnpm build:launch` |
-| Output directory | `dist` |
-| Node | `24.19.0`, pinned in `.node-version`; set `NODE_VERSION=24.19.0` if needed |
-| pnpm | `11.25.0`, recorded in package.json; set `PNPM_VERSION=11.25.0` |
-| Build telemetry | `ASTRO_TELEMETRY_DISABLED=1` recommended |
-| Runtime variables/secrets | None required by the current static site |
+| Deploy command | `npx wrangler deploy` |
+| Static assets | `./dist`, read from `wrangler.jsonc` |
+| Node | `24.19.0` via `.node-version`; set `NODE_VERSION=24.19.0` in build variables |
+| pnpm | `11.25.0` via `packageManager`; set `PNPM_VERSION=11.25.0` in build variables |
+| Optional build variable | `ASTRO_TELEMETRY_DISABLED=1` |
+| Application runtime variables/secrets | None required |
 
-Node/pnpm environment overrides are supported by the Pages build environment. Test the selected build image and locked dependency installation in the actual account; local success is not a remote-build guarantee. [Build image configuration](https://developers.cloudflare.com/pages/configuration/build-image/).
+Keep the committed pnpm lockfile and development dependencies available for the build (`astro check` needs them). No dependency or adapter changes are necessary. Wrangler runs as a deployment tool, not as a website dependency. Verify the locked dependency installation and selected tool versions in Cloudflare's actual build log.
 
-The launch command deliberately fails today: old unreviewed legal pages remain and `launch-approval.json` flags are false. Local `pnpm build`/`pnpm preview` still work. Do not switch the production command to bypass this guard. All flags require real decisions and evidence, not mechanical changes to make a build pass. Even a passing guard does not authorize deployment or certify compliance.
+Workers Builds manages deployment authentication separately from site code. Confirm the GitHub App has access to this repository and the build's Cloudflare deployment token has the required permissions. Do not put tokens, operator records or secrets into Git, public assets or `PUBLIC_*` variables. No R2, KV, D1, database, runtime binding or paid service is needed for the current site.
 
-## Public repository hygiene before any commit
+References: [Workers Builds configuration](https://developers.cloudflare.com/workers/ci-cd/builds/configuration/), [build image and version overrides](https://developers.cloudflare.com/workers/ci-cd/builds/build-image/), [GitHub integration](https://developers.cloudflare.com/workers/ci-cd/builds/git-integration/github-integration/).
 
-1. Keep submissions, contracts, private identity details, API credentials and legal-review correspondence outside public Git. `legal-review/`, `private-submissions/`, `private-records/`, `.env*`, `.wrangler/` and common private-key files are ignored locally; ignoring does not erase history. Do not collect guardian records for the adults-only launch intake.
-2. Complete approved public content privately. Do not commit draft/future entries or their media to this public repository. The development scaffold writes unapproved files under src/content; they must remain untracked until reviewed and eligible for public release. Cloudflare Git builds cannot use ignored local media: only approved assets needed by released content may enter Git.
-3. Explicitly stage reviewed paths, never blanket `git add .`. Build, then run `pnpm audit:repository`. It inspects staged/tracked bytes for private paths, common credential patterns, unapproved/future content and media absent from the release build. This is a limited safeguard, not exhaustive secret scanning. Review `git diff --cached` and the full history manually before push. The audit does not automatically run as a Git hook.
-4. If a secret or private file was previously pushed, removing it now is insufficient: rotate credentials, restrict access, evaluate history/remote-copy cleanup and required notifications with the operator. No such incident is inferred by this audit.
+## Mandatory release safeguard
 
-## First push: separate explicit approval required
+`pnpm build:launch` runs the static build, repository audit and launch check in sequence. It deliberately exits unsuccessfully while the four `launch-approval.json` approvals are false or public legal drafts remain. A failed build must prevent the deploy command from running. Do not replace it with `pnpm build`, append a failure-ignoring command, remove draft notices, or change approval flags just to pass CI. A passing check is not legal certification or independent deployment authorization.
 
-Recheck the remote immediately before pushing; it may have changed. Do not create a replacement repository, force-push or switch branches without approval.
+**Wrangler does not enforce this guard itself.** `npx wrangler deploy` can upload an existing local `dist`, including unreviewed legal pages. Do not run it manually unless the guarded build has just passed for the same reviewed checkout and release is authorized. A dry run (`npx wrangler deploy --dry-run`) validates configuration without publishing and is not release approval.
 
-After Git transport is repaired, approved files are committed and remote `main` is still absent, an approved initial push can map local master to remote main with `git push origin master:main`, preserving the local branch name. This command has **not** been run. If remote main has acquired commits, stop and inspect/reconcile them instead of overwriting. An upstream/tracking change is optional and needs a separate deliberate decision; renaming master is not required for Pages to deploy main.
+Before a production push/merge:
 
-## Cloudflare account steps — after approval
+1. Verify the actual account's build command is exactly `pnpm build:launch` and the deploy command runs only after success. If this cannot be verified, submit a review PR instead of pushing to `main`; do not merge it yet.
+2. Disable nonproduction/preview builds until their guard and access policy are verified. A draft PR is not an access control: connected branch builds or preview URLs may still publish files. Do not assume a preview is confidential or safe because it has `noindex`.
+3. Disable/disconnect automatic builds if the configured commands are unsafe or uncertain. Reconnect only after the commands and branch rules are correct; connection or retry actions can trigger a deployment.
+4. Resolve the genuine legal/content/account decisions in the launch checklist. Record approvals only after the operator actually grants them and appropriate legal review is complete.
+5. Review changed files, explicitly stage only approved paths, then run the repository audit before committing. Keep private submissions, legal-review documents, credentials and unpublished contributor sources/media out of this public repository.
 
-1. Confirm the actual account owner, Pages project name, free-plan availability and domain control. Enable MFA and minimum necessary collaborator roles. Do not store account IDs/tokens or completed legal records in public files if private.
-2. In Workers & Pages, use Pages Git integration and authorize the Cloudflare GitHub App for **only the existing Glosso repository**. Select main and the build settings above. Account connection/project creation may trigger a deployment: do not complete a deployment action before legal/content review and explicit release approval. [GitHub integration](https://developers.cloudflare.com/pages/configuration/git-integration/github-integration/).
-3. Disable unwanted automatic production/preview deployments until the operator has approved a release workflow. A Git push can become a publication event once integration is enabled. Preview URLs are not confidential simply because they are hard to guess or noindex; use approved access restrictions if previews are needed. No private submissions may enter any preview build. [Preview deployment controls](https://developers.cloudflare.com/pages/configuration/preview-deployments/).
-4. Configure the final custom domain through the Pages **Custom domains** interface. For apex `glosso.org`, the domain must be a zone in the same Cloudflare account with the required Cloudflare nameservers. Inventory and preserve existing MX/TXT/DNSSEC records before registrar changes. Add the domain in Pages rather than merely inventing a CNAME. For approved `www`, configure that hostname and redirect it to the canonical apex. Values for assigned nameservers and `<project>.pages.dev` must come from the actual account. [Custom domains](https://developers.cloudflare.com/pages/configuration/custom-domains/).
-5. Confirm certificate issuance, HTTPS, canonical redirects, no redirect loops, real 404s and the desired treatment of the production pages.dev alias. Do not blindly redirect preview hosts or expose them as alternate indexed sites. Verify robots/sitemap at the final domain after the approved deployment.
+See [production and preview branch controls](https://developers.cloudflare.com/workers/ci-cd/builds/build-branches/). Build settings live in the account; the repository cannot certify them.
 
-## Analytics — both selected, not activated
+## Local verification before release
 
-The operator selected **Cloudflare Web Analytics** and **dashboard traffic analytics**. No analytics API token, browser snippet or consent manager has been added to the source. These choices do not approve a Most Read formula.
+```sh
+pnpm build
+pnpm test:publishing
+pnpm test:homepage
+pnpm test:release-build
+pnpm audit:repository
+pnpm build:launch
+```
 
-- Web Analytics: Pages offers Metrics → Web Analytics → Enable; the beacon is added on the next deployment. Prefer one verified setup method, not both automatic injection and a manual duplicate. Review the planned privacy policy and any legally required regional/consent controls before activation. No browser secret is needed for this dashboard-managed route. [Pages Web Analytics setup](https://developers.cloudflare.com/pages/how-to/web-analytics/).
-- Dashboard traffic analytics: verify the actual proxied zone/Pages traffic datasets available on the existing free plan. Do not enable paid HTTP analytics, Logpush, Workers Analytics Engine or exports by assumption. Confirm access roles, retention and provider terms.
-- After authorized activation, inspect actual script/POST requests, cookies/storage and settings. Confirm a single beacon, intended hostnames, no sensitive URLs, and that blocking analytics does not break reading/navigation. Reconcile the legal draft with this evidence before approving its public text. Do not infer a universal cookie-consent exemption.
-- Keep any future API credential in a scoped Cloudflare/GitHub secret store, never `PUBLIC_*` variables or source. Git integration and dashboard analytics do not require a Cloudflare API token in this project.
+The last command is expected to fail until release blockers are resolved. Use `pnpm preview` for local inspection, not public publication. The isolated release test covers populated monthly/special issues and excludes drafts/scheduled work without inserting fixtures into the live site. Check output includes `404.html`, `robots.txt` and `sitemap.xml`.
 
-## Resource and PDF constraints
+The repository audit reads staged/tracked bytes. Run it again after explicit staging; a prior pass does not approve new files. Review `git diff --cached` and relevant history. Ignore rules do not erase tracked files or old commits; this audit is a limited safeguard, not exhaustive secret/copyright review. If a secret was exposed, revoke/rotate it and review remote/history cleanup rather than merely deleting the current file.
 
-No R2 bucket, KV, D1, Worker or paid service is currently necessary. Pages has a 25 MiB per-asset limit; check finished magazine PDFs before choosing this host for them. If larger, obtain approval for an appropriate external HTTPS host or other storage and update privacy/rights disclosures; do not silently enable paid R2. [Pages limits](https://developers.cloudflare.com/pages/platform/limits/).
+## Domain and account steps after release approval
 
-## Release verification and rollback
+1. Confirm ownership of the existing Worker and an active Cloudflare zone for `glosso.org`. Keep MFA and minimum necessary collaborator permissions. No account identifiers need to be published in this repository.
+2. In **Workers & Pages → glosso → Settings → Domains & Routes**, add a **Custom Domain** for `glosso.org` after approval. Cloudflare provisions its DNS record and certificate. Inspect conflicting records first; preserve email MX/TXT and other existing records, especially those supporting `contact@glosso.org`. Do not invent nameserver/CNAME values or remove DNS records blindly.
+3. If `www` is wanted, approve its hostname and redirect to the canonical apex. Verify HTTPS, certificate issuance, canonical URLs, robots/sitemap, real 404 status, navigation and any released PDF/media downloads on the live host.
+4. Review `workers.dev` and preview URL exposure separately. Disable unnecessary public aliases or apply approved access controls; a new custom domain does not make old URLs private.
 
-After legal approval and explicit deployment approval, verify the published domain, all navigation, content/credits, monthly/special issue separation, PDF bytes/MIME/download behavior, accessibility, analytics and search metadata. Scheduled content needs a later build/deploy; there is no scheduler.
+Reference: [Workers Custom Domains](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/). No DNS or domain binding is automatically changed by the supplied Wrangler configuration.
 
-Record the approved commit, build, legal versions, rights records and release time privately. Identify a previously approved safe build for rollback. Do not roll back to a build exposing removed private/infringing material. Removal may also require cache purge and deleting old accessible deployments; current-output omission alone does not revoke earlier copies.
+## Analytics and publication assets
+
+Both Cloudflare Web Analytics and dashboard traffic analytics were selected, not verified as activated. Inspect the actual zone/Worker and Web Analytics settings before finalizing privacy disclosures. Do not follow the old Pages-only automatic beacon instructions. If authorized, use one verified Web Analytics setup method, check the live requests/storage and avoid duplicate beacons. Confirm datasets, access, retention and regional controls; do not enable paid logging or infer a Most Read metric. Credentials belong in scoped account secrets, never public source.
+
+Keep unpublished material in private storage. `public/` is always public; managed `publication-assets/` only emits eligible release references, but Git itself is public. Check finished PDFs against current [Workers Static Assets limits](https://developers.cloudflare.com/workers/static-assets/platform/limits/) before upload. Oversized assets require an explicitly approved hosting decision, not an automatic paid-service addition.
+
+## Release record and rollback
+
+Record the approved commit, legal versions, rights evidence and successful build/deployment privately. Scheduled publication still requires a later approved build/deploy. Roll back only to a previously approved safe version. Removing files from the newest output does not revoke old deployment URLs, caches or downloaded copies; review those separately when handling withdrawal or private-file incidents.

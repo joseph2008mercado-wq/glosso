@@ -1,6 +1,6 @@
 # Glosso — final review report and launch checklist
 
-2026-09-24. **Review drafts complete; not cleared for public release.** This is the one current decision report. The [six-document packet](../legal-review/README.md) is private/gitignored. [Implementation cross-check](../legal-review/IMPLEMENTATION-CROSSCHECK.md) covers every draft section; [technical evidence](LAUNCH_AUDIT.md) and [deployment instructions](DEPLOYMENT.md) support this report. No redesign, editorial writing, push or deployment.
+2026-09-24 legal review; deployment notes updated 2026-09-26. **Review drafts complete; not cleared for public release.** This is the one current decision report. The [six-document packet](../legal-review/README.md) is private/gitignored. [Implementation cross-check](../legal-review/IMPLEMENTATION-CROSSCHECK.md) covers every draft section; [technical evidence](LAUNCH_AUDIT.md) and [deployment instructions](DEPLOYMENT.md) support this report. The repository is now populated; GitHub publication does not approve a website deployment or legal drafts.
 
 ## 1. Verified defects fixed
 
@@ -17,17 +17,17 @@ Production build, publishing/isolated release tests and targeted accessibility/r
 
 ## 2. Genuine blockers before launch
 
-- [ ] Supply the responsible individual's required notice details and a working monitored privacy/copyright/contact address. Current addresses are null.
+- [ ] Supply the responsible individual's required notice details and confirm a working monitored privacy/copyright contact. General contact is now `contact@glosso.org`; mailbox operation and its use for legal requests still need confirmation. The submissions address remains unset.
 - [ ] Resolve applicable privacy disclosures using the actual Cloudflare configuration, then approve the exact public text. No beacon is installed locally; no Cloudflare account access was available. Provider retention, roles, exports, security cookies and regional controls cannot be certified from code.
 - [ ] Replace the old legal route bodies with approved versions. The old privacy page still incorrectly mentions Google Fonts; all four legal routes remain unreviewed and launch-blocked. Do not remove warnings from stale wording.
-- [ ] Record genuine release approvals and configure/test the actual host per the runbook. `pnpm build:launch` intentionally rejects four false flags and four old draft routes. Re-run the repository audit after explicit staging: its current zero-file pass does not approve future private files.
+- [ ] Record genuine release approvals and configure/test the existing Cloudflare Worker per the runbook. `pnpm build:launch` intentionally rejects four false flags and four old draft routes. Verify the guarded build in the account before merging/pushing to main; disable unverified preview deployments. Re-run the repository audit after explicit staging; a prior pass does not approve future private files.
 
 An honest empty/read-only launch does **not** require invented articles, a CMS, forms, guardian intake, paid services, a ranking metric, ecommerce/newsletter terms or blanket DMCA registration. Optional browser analytics may stay disabled until its disclosures/configuration are resolved. Account-side behavior and live HTTPS/404/private-file checks still need verification during the operator's release.
 
 ## 3. Information or decisions needed from you
 
 - Actual operator country/state for applicability review; public contact email and required notice identity. No home address will be inferred or published by default.
-- Cloudflare Pages/zone and both analytics settings, access roles, retention/exports and actual cookies. No account IDs or secrets need to be public.
+- Existing Cloudflare Worker/zone, guarded build and branch settings, and both analytics settings, access roles, retention/exports and actual cookies. No account IDs or secrets need to be public.
 - Approve or change the proposed **30-day post-publication withdrawal/removal** and **90-day closed-correspondence/rejected-work retention** commitments; establish a justified private contract-record period.
 - **Only before intake opens:** mailbox/storage providers, authorized reviewers, backups/deletion, file limits, opening status and simultaneous/prior-publication policy. Supply artistic instructions yourself; BLANK remains.
 - **Only before each contribution is released:** recorded agreement identifying work, credit, payment or expressly unpaid status, print quantity/window, promotion and special-edition permissions. Future reprints/commercial uses require further agreement. Rights collection is an editorial process, not an automatic consequence of `approved: true`.

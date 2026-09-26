@@ -4,6 +4,20 @@ Updated 2026-09-24. **Local technical checks pass; public release remains blocke
 
 Use [FINAL_LAUNCH_CHECKLIST.md](FINAL_LAUNCH_CHECKLIST.md) as the single current checklist. This document records evidence, not another list of approvals. The user will perform deployment; none was performed here.
 
+## Workers configuration verification — 2026-09-26
+
+Added the operator-requested root `wrangler.jsonc` for static assets and real 404 handling; updated the Pages-era runbook and related instructions. No website source, artwork, dependency, lockfile, Astro rendering mode or launch approval changed.
+
+- Installed versions verified: Node 24.19.0, pnpm 11.25.0, Astro 5.18.2, MDX integration 4.3.14 and TypeScript 5.9.3.
+- `pnpm build`: passed; Astro check reported zero errors/warnings/hints and generated 12 pages. Empty content-collection notices are expected for the unpublished site.
+- `pnpm test:publishing`, `pnpm test:homepage`, `pnpm test:release-build`: passed, including populated monthly/special issues and draft/scheduled exclusion. The isolated release test needed permission to access existing linked dependencies outside the restricted sandbox; no project fix was necessary.
+- `pnpm audit:repository`: passed after explicitly staging the seven configuration/documentation paths (90 total indexed paths). `git diff --cached --check` passed.
+- Wrangler 4.140.0 `deploy --dry-run`: passed, reading 38 asset files with no bindings and no upload/deployment. The local runtime lacks standalone npx; a pnpm temporary-tool install had a missing transitive module. Running `pnpm --package=npm dlx npx --yes wrangler@4.140.0 deploy --dry-run` succeeded without adding a project dependency. Deployment settings remain `npx wrangler deploy` in Cloudflare's build environment.
+- Exact Wrangler configuration and presence of `dist/404.html`, `dist/robots.txt`, `dist/sitemap.xml`: verified.
+- `pnpm build:launch`: intentionally exited 1 after a successful build/audit. All four approvals remain false; `/legal/`, `/legal/privacy/`, `/legal/terms/` and `/legal/disclaimer/` still contain unreviewed material.
+
+Cloudflare production/preview settings and custom-domain activation remain account-side checks, not verified by this dry run. Review-branch publication must not expose drafts through automatic previews; verify those controls before pushing. Production main must not receive these changes until its guarded build is verified. The older Git/hosting observations below describe the September 24 audit; the populated remote main was rechecked at `cf48e3d996f33afb37ee07f6257df484cbda7394` before this configuration change.
+
 ## Final clarification / WCAG 2.2 AA extension
 
 The operator confirmed personal individual operation and no payments, advertising or subscriptions. All six private draft documents were cross-checked section by section in `legal-review/IMPLEMENTATION-CROSSCHECK.md`; the contributor agreement now explicitly covers scheduling and headlines without permitting substantial unapproved alterations or misleading attribution. A privacy sentence implying activated Cloudflare processing was corrected to planned/conditional wording. Existing public legal drafts remain unchanged and blocked, not silently approved.
@@ -44,7 +58,7 @@ Reproduction: set the Playwright/Chrome variables below, then `node scripts/chec
 | Accessibility | Added keyboard focus target for skip link; enlarged-text desktop navigation now wraps instead of overflowing | Screen-reader review, contextual contrast, real work alt text, audio alternatives and PDF accessibility still require content-specific review |
 | Visual design | No redesign; existing palette/layout/motion and original frog preserved | Targeted semantic, focus and responsive accessibility corrections only |
 | Legal | Revised six-document packet reflects latest supplied facts and rights model; separate private storage | Old public-route drafts still blocked; privacy route contains stale Google Fonts text |
-| Build/hosting | Astro 5 static dist output; no runtime DB/bindings/secrets required; guarded Pages build documented | Account/domain/TLS/analytics configuration cannot be inferred from source |
+| Build/hosting | Astro 5 static dist output; no runtime DB/bindings/secrets required; deployment instructions updated 2026-09-26 for Workers Static Assets with the same guarded build | Account/domain/TLS/analytics configuration cannot be inferred from source |
 | Git | Local master, no commits/indexed files; origin points to existing joseph2008mercado-wq/glosso.git | Prior read-only GitHub check: public repo, main metadata, empty branch list; recheck before first push. Local HTTPS helper repair may be needed as documented |
 | Public availability | No push/deploy/account mutation by this work | Do not treat local success as approval to expose drafts |
 
