@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import IssueFeature from '../components/IssueFeature.astro';
 import ArticleFeature from '../components/ArticleFeature.astro';
 import PublicationRibbon from '../components/PublicationRibbon.astro';
+import UXNotice from '../components/UXNotice.astro';
 import { displayDate, publishedContent } from '../lib/content';
 import { newest, mostRead } from '../lib/homepage';
 import { readership, engagementApproved } from '../data/readership';
@@ -16,7 +17,7 @@ const namesFor = (work: typeof latest) => work?.data.contributors.map((id) => pe
   <div class="publication-composition" data-publication-composition>
   <PublicationRibbon />
   <section class="current-issue wrap" aria-labelledby="current-issue-title">
-    <div class="home-heading" data-enter><h1 id="current-issue-title">Current <span>Issue</span></h1><a class="quiet-link" href="/issues/">Issue Archive <span aria-hidden="true">↗</span></a></div>
+    <div class="home-heading" data-enter><h1 id="current-issue-title">Current <span>Issue</span></h1><UXNotice /><a class="quiet-link" href="/issues/">Issue Archive <span aria-hidden="true">↗</span></a></div>
     <IssueFeature issue={currentIssue} />
   </section>
   <div class="article-features wrap">
@@ -32,7 +33,11 @@ const namesFor = (work: typeof latest) => work?.data.contributors.map((id) => pe
 <style>
   .publication-composition { position: relative; isolation: isolate; }
   .current-issue { padding-block: 2.4rem 0; }
-  .home-heading { position: relative; z-index: 3; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1.5rem; margin-bottom: 1rem; }
+  .home-heading { position: relative; z-index: 3; display: grid; grid-template-columns: auto minmax(240px, 430px) auto; grid-template-areas: 'title notice archive'; justify-content: space-between; align-items: center; gap: 1.5rem; margin-bottom: 1rem; }
+  .home-heading h1 { grid-area: title; min-width: 0; }
+  .home-heading :global(.ux-notice) { grid-area: notice; justify-self: center; max-width: 430px; }
+  .home-heading > .quiet-link { grid-area: archive; justify-self: end; }
+  .home-heading:has([data-ux-notice][hidden]) { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'title archive'; }
   .home-heading h1 { display: flex; align-items: baseline; flex-wrap: wrap; gap: .3em; margin: 0; font: 500 clamp(1.3rem,2.4vw,2.2rem)/1 var(--display); letter-spacing: -.04em; }
   .home-heading h1 span { display: inline-block; font: italic 400 clamp(3.8rem,6.8vw,6.5rem)/.95 Georgia, serif; letter-spacing: -.055em; }
   .home-heading .quiet-link { border: 1px solid var(--ink); border-radius: 50%; min-height: 70px; padding: .9rem 1.4rem; transform: rotate(-7deg); transition: background var(--motion-fast) var(--motion-ease), transform var(--motion-ui) var(--motion-ease); }
@@ -47,6 +52,9 @@ const namesFor = (work: typeof latest) => work?.data.contributors.map((id) => pe
   .updates-list h3 { margin: .75rem 0; font: 500 1.5rem/1.2 var(--display); white-space: pre-wrap; overflow-wrap: anywhere; }
   .updates-list h3 a { font: inherit; }
   .updates-list p { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.5; }
+  @media(max-width:1100px) {
+    .home-heading { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'title archive' 'notice notice'; }
+  }
   @media(max-width:760px) {
     .current-issue { padding-top: 1.8rem; }
     .home-heading { align-items: start; margin-bottom: 1.2rem; gap: 1rem; }

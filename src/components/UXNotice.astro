@@ -1,0 +1,89 @@
+---
+import { site } from '../data/site';
+---
+<aside class="ux-notice" data-ux-notice aria-label="Glosso UI designer notice">
+  <div class="window-titlebar">
+    <span>Glosso</span>
+    <button class="window-close" type="button" data-dismiss-ux hidden aria-label="Dismiss UI designer notice"><span aria-hidden="true">×</span></button>
+  </div>
+  <div class="window-body">
+    <svg class="error-icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false" shape-rendering="crispEdges">
+      <path fill="#800000" d="M10 1h12v3h5v5h3v14h-3v5h-5v3H10v-3H5v-5H2V9h3V4h5Z" />
+      <path fill="#d40000" d="M10 2h11v3h5v5h3v11h-3v5h-5v3H10v-3H5v-5H2V10h3V5h5Z" />
+      <path fill="#fff" d="m9 7 7 7 7-7 3 3-7 7 7 7-3 3-7-7-7 7-3-3 7-7-7-7Z" transform="translate(2 2) scale(.8)" />
+    </svg>
+    <p><strong>Human UI Designer Needed!</strong> Want UI Experience? Be a part of Glosso.</p>
+  </div>
+  {site.contactEmail && <>
+    <div class="window-actions"><a class="window-ok" href={`mailto:${site.contactEmail}`} data-ux-mail>Email</a></div>
+    <div class="window-email" data-ux-email>
+      <label for="ux-contact-email">Email address</label>
+      <div class="email-controls">
+        <input id="ux-contact-email" type="text" value={site.contactEmail} readonly spellcheck="false" autocomplete="off" />
+        <button type="button" class="window-copy" data-copy-ux hidden>Copy</button>
+      </div>
+      <span class="copy-status" data-copy-status role="status"></span>
+    </div>
+  </>}
+</aside>
+
+<script>
+  const notice = document.querySelector<HTMLElement>('[data-ux-notice]');
+  if (notice) {
+    const panel = notice.querySelector<HTMLElement>('[data-ux-email]');
+    const address = notice.querySelector<HTMLInputElement>('#ux-contact-email');
+    const copy = notice.querySelector<HTMLButtonElement>('[data-copy-ux]');
+    const status = notice.querySelector<HTMLElement>('[data-copy-status]');
+    if (panel && address && copy && status) {
+      panel.hidden = true;
+      copy.hidden = false;
+      notice.querySelector<HTMLAnchorElement>('[data-ux-mail]')?.addEventListener('click', () => {
+        panel.hidden = false;
+        address.focus({ preventScroll: true });
+        address.select();
+        // Keep the anchor's native mailto action. No message is sent by the site.
+      });
+      address.addEventListener('focus', () => address.select());
+      copy.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(address.value);
+          status.textContent = 'Copied';
+        } catch {
+          address.focus({ preventScroll: true });
+          address.select();
+          status.textContent = 'Select and copy the email address.';
+        }
+      });
+    }
+    notice.querySelectorAll<HTMLButtonElement>('[data-dismiss-ux]').forEach((button) => {
+      button.hidden = false;
+      button.addEventListener('click', () => {
+        notice.hidden = true;
+        // Return focus to a useful adjacent control, without a modal or storage.
+        document.querySelector<HTMLAnchorElement>('.home-heading .quiet-link')?.focus({ preventScroll: true });
+      });
+    });
+  }
+</script>
+
+<style>
+  .ux-notice { width: 100%; min-width: 0; padding: 3px; color: #111; background: #c0c0c0; border: 1px solid; border-color: #fff #000 #000 #fff; box-shadow: inset 1px 1px #dfdfdf, inset -1px -1px #808080; font: 14px/1.35 Tahoma, Verdana, sans-serif; }
+  [hidden] { display: none !important; }
+  .window-titlebar { display: flex; align-items: center; justify-content: space-between; gap: .5rem; min-height: 28px; padding: 2px 3px 2px 7px; background: #000080; color: #fff; font-weight: 700; }
+  .window-body { display: grid; grid-template-columns: 32px minmax(0, 1fr); align-items: center; gap: 13px; padding: 15px 13px 8px; }
+  .error-icon { width: 32px; height: 32px; }
+  p { margin: 0; overflow-wrap: anywhere; }
+  strong { display: block; margin-bottom: 3px; font-weight: 700; }
+  button, .window-ok { appearance: none; cursor: pointer; background: #c0c0c0; color: #111; border: 1px solid; border-color: #fff #000 #000 #fff; box-shadow: inset 1px 1px #dfdfdf, inset -1px -1px #808080; border-radius: 0; }
+  button:active, .window-ok:active { border-color: #000 #fff #fff #000; box-shadow: inset 1px 1px #808080; }
+  button:focus-visible, .window-ok:focus-visible { outline: 1px dotted #111; outline-offset: -5px; }
+  .window-close { display: grid; place-items: center; width: 26px; height: 26px; flex: 0 0 26px; padding: 0; font: 700 22px/1 Arial, sans-serif; }
+  .window-actions { display: flex; justify-content: center; padding: 0 12px 10px; }
+  .window-ok, .window-copy { display: inline-grid; place-items: center; min-width: 78px; min-height: 30px; padding: 3px 14px; font: inherit; }
+  .window-email { padding: 0 13px 12px; }
+  .window-email label { display: block; margin-bottom: 4px; }
+  .email-controls { display: flex; gap: 8px; }
+  .email-controls input { flex: 1; width: 100%; min-width: 0; padding: 5px 6px; border: 2px solid; border-color: #808080 #fff #fff #808080; border-radius: 0; background: #fff; color: #111; font: inherit; }
+  .email-controls input:focus-visible { outline: 2px solid #000080; outline-offset: 1px; }
+  .copy-status { display: block; margin-top: 4px; overflow-wrap: anywhere; }
+</style>

@@ -9,6 +9,7 @@ This is the source for glosso.org. Build and maintain it as a contemporary indep
 - Use the exact visible placeholder `BLANK` wherever required editorial prose has not been personally supplied and approved by the owner. Do not use lorem ipsum or invented sample work.
 - Preserve owner-identified human-authored content verbatim, including unconventional capitalization, punctuation, line breaks, spacing and typographic composition. Instructions supplied as design context are not automatically approved website copy.
 - Functional navigation labels and necessary accessible interface text are permitted. Proper names supplied by the owner (Glosso, Glosso Collective, Glosso Magazine) may be used as labels.
+- The owner supplied the homepage recruitment notice and then requested UI rather than UX: "Human UI Designer Needed! Want UI Experience? Be a part of Glosso." Preserve this wording in UXNotice. Its Windows 98-style presentation is an inline, dismissible notice, not a blocking system error. Do not replace this supplied copy with BLANK or invent recruitment details/contact information.
 - Never publish placeholder articles, fictional contributors, unpublished issues or events. Content collection entries remain unpublished until explicitly marked `approved: true` after owner review.
 - Keep legal text separate from editorial prose. Existing legal pages are unreviewed drafts requiring operator approval; do not invent legal compliance claims or business details.
 - This policy persists until the owner explicitly changes it. No AI-generated editorial prose is permitted by default.
@@ -30,6 +31,7 @@ This is the source for glosso.org. Build and maintain it as a contemporary indep
 - `pnpm preview` serves the production output after a build.
 - New writing, issues and contributors go in `src/content/`. See `docs/PUBLISHING.md` for frontmatter and file examples.
 - Contact and submission addresses are edited in `src/data/site.ts`. Keep them `null` until real addresses are supplied.
+- The owner has supplied `contact@glosso.org` for general contact and the UX notice. Use that shared setting for both; do not assume it is also the submissions address. The UX notice's Email action opens a native mailto draft and reveals a readonly, selectable email field with a clipboard/manual-copy fallback. It does not submit a form or send an email automatically.
 - Preserve punctuation, case, whitespace and line breaks in contributed work. Use `presentation: verbatim` with a `.md` raw-text body when exact spacing matters; ordinary JSX text inside an MDX pre can normalize indentation. Custom MDX remains supported.
 - Keep navigation small, layouts readable and contributors' work visually generous. Avoid generic startup sections, grunge and excessive effects.
 - The current visual direction is joyful, refined and slightly bizarre: saturated turquoise, vermilion ribbon forms, warm cream, curved geometry, expressive but restrained typography and generous editorial space. Art Deco informs proportion and rhythm, not decorative thin-line fans or repeated arches. Avoid scattered ornaments, gloomy backgrounds and unmotivated rules.

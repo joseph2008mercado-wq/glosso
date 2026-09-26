@@ -22,7 +22,7 @@ Open `http://127.0.0.1:4321/` again. The build output is `dist/`.
 
 ## Publishing
 
-Read [docs/PUBLISHING.md](docs/PUBLISHING.md) for adding writing, issues, contributors, images, audio and PDFs. General contact and submission addresses are in `src/data/site.ts`; they intentionally remain unset until supplied by the owner.
+Read [docs/PUBLISHING.md](docs/PUBLISHING.md) for adding writing, issues, contributors, images, audio and PDFs. General contact and submission addresses are in `src/data/site.ts`. The owner supplied `contact@glosso.org` for general contact and the homepage UX notice; the submissions address remains unset. The UX notice opens the visitor's email handler and offers a selectable address and copy button; no form backend or automatic email sending is involved.
 
 Editorial prose must be supplied and approved by the owner. Missing prose displays `BLANK`; collection entries are withheld from publication until marked `approved: true`. The legal pages retain unreviewed drafts with visible notices and `noindex`; review the outstanding facts in [docs/LEGAL_REVIEW.md](docs/LEGAL_REVIEW.md) before release.
 
