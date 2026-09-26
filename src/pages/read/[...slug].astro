@@ -1,0 +1,36 @@
+---
+import Base from '../../layouts/Base.astro';
+import WorkCard from '../../components/WorkCard.astro';
+import { render, type CollectionEntry } from 'astro:content';
+import { displayPublicationDate, displayKind, publishedContributors, publishedIssues, publishedWriting } from '../../lib/content';
+import { readVerbatimBody } from '../../lib/verbatim';
+
+export async function getStaticPaths() {
+  const works = await publishedWriting();
+  return works.map((work) => ({ params: { slug: work.id }, props: { work } }));
+}
+
+interface Props { work: CollectionEntry<'writing'>; }
+const { work } = Astro.props;
+const { Content } = await render(work);
+const verbatim = work.data.presentation === 'verbatim' ? await readVerbatimBody(work) : undefined;
+const people = await publishedContributors();
+const authors = work.data.contributors.map((id) => people.find((person) => person.id === id));
+const issueIsPublished = work.data.issue && (await publishedIssues()).some((issue) => issue.id === work.data.issue);
+const related = (await publishedWriting()).filter((entry) => entry.id !== work.id && entry.data.contributors.some((id) => work.data.contributors.includes(id))).slice(0, 3);
+const canonical = new URL(`/read/${work.id}/`, Astro.site).href;
+const schema = {
+  '@context': 'https://schema.org', '@type': work.data.kind === 'visual-art' ? 'VisualArtwork' : 'Article',
+  '@id': canonical, url: canonical, mainEntityOfPage: canonical,
+  name: work.data.title, ...(work.data.kind !== 'visual-art' ? { headline: work.data.title } : {}),
+  description: work.data.summary, datePublished: work.data.published.toISOString(),
+  author: authors.filter((person) => !!person).map((person) => ({ '@type': 'Person', name: person!.data.name, url: new URL(`/contributors/${person!.id}/`, Astro.site).href })),
+  image: work.data.cover ? new URL(work.data.cover, Astro.site).href : undefined,
+  isPartOf: issueIsPublished ? { '@type': 'PublicationIssue', url: new URL(`/issues/${work.data.issue}/`, Astro.site).href } : undefined,
+};
+---
+<Base title={work.data.title} description={work.data.summary} image={work.data.cover} imageAlt={work.data.coverAlt} type="article" publishedAt={work.data.published} authors={authors.filter((person) => !!person).map((person) => person!.data.name)} structuredData={schema}>
+  <header class="wrap work-header"><a class="back-link" href="/read/">← Read</a><div class="work-info"><span>{displayKind(work.data.kind)}</span><time datetime={work.data.published.toISOString()}>{displayPublicationDate(work.data.published)}</time>{issueIsPublished && <a href={`/issues/${work.data.issue}/`}>Issue ↗</a>}</div><h1>{work.data.title}</h1>{work.data.subtitle && <p class="subtitle">{work.data.subtitle}</p>}{authors.length > 0 && <div class="work-info">{authors.map((person, index) => <span>{person ? <a href={`/contributors/${person.id}/`}>{person.data.name}</a> : 'BLANK'}{index < authors.length - 1 ? ',' : ''}</span>)}</div>}</header>
+  <article class="wrap work-body">{work.data.cover && <img class="work-feature" src={work.data.cover} alt={work.data.coverAlt ?? 'BLANK'} />}{work.data.audio && <div class="audio-block"><span>Listen to this work</span><audio controls preload="none" src={work.data.audio}>Your browser does not support audio playback.</audio></div>}<div class="prose">{verbatim !== undefined ? <pre class="score"><span>{verbatim}</span></pre> : <Content />}</div></article>
+  {related.length > 0 && <section class="wrap section related-section"><div class="section-heading"><h2>Read</h2></div><div class="work-grid">{related.map((entry) => <WorkCard work={entry} />)}</div></section>}
+</Base>

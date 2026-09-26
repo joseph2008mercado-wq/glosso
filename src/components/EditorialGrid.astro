@@ -1,0 +1,78 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import WorkCard from './WorkCard.astro';
+interface Props { works: CollectionEntry<'writing'>[]; }
+const { works } = Astro.props;
+---
+{works.length ? (
+  <div class="editorial-grid published-grid">
+    {works.map((work) => <WorkCard work={work} />)}
+  </div>
+) : (
+  <div class="layout-preview">
+    <div class="preview-notice"><span class="status-label">Layout preview</span><span>Unpublished</span></div>
+    <div class="editorial-grid preview-grid">
+      <article class="preview-article preview-lead" aria-label="Unpublished article layout preview">
+        <div class="preview-image" role="img" aria-label="BLANK — article image placeholder"><span>BLANK</span></div>
+        <div class="preview-copy"><h3>BLANK</h3><p>BLANK</p><span class="preview-author" role="group" aria-label="Contributor placeholder">BLANK</span></div>
+      </article>
+      <article class="preview-article preview-type" aria-label="Unpublished article layout preview">
+        <div class="preview-copy"><h3>BLANK</h3><p>BLANK</p><span class="preview-author" role="group" aria-label="Contributor placeholder">BLANK</span></div>
+      </article>
+      <article class="preview-article preview-aside" aria-label="Unpublished article layout preview">
+        <div class="preview-image" role="img" aria-label="BLANK — article image placeholder"><span>BLANK</span></div>
+        <div class="preview-copy"><h3>BLANK</h3><p>BLANK</p><span class="preview-author" role="group" aria-label="Contributor placeholder">BLANK</span></div>
+      </article>
+    </div>
+  </div>
+)}
+
+<style>
+  .preview-notice { display: flex; align-items: center; gap: .8rem; min-height: 36px; margin-bottom: 1.15rem; font: .65rem/1.4 var(--mono); color: var(--muted); }
+  .editorial-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 2rem; align-items: start; }
+  .preview-article { min-width: 0; }
+  .preview-lead { grid-row: span 2; background: var(--ink); color: var(--paper); border-radius: 0 100px 0 0; overflow: hidden; }
+  .preview-image { display: grid; place-items: center; aspect-ratio: 1.9; overflow: hidden; }
+  .preview-lead .preview-image { background: var(--turquoise); color: var(--ink); border-radius: 0 0 50% 0; margin: 1.5rem 1.5rem 0; }
+  .preview-image > span { font: 700 clamp(3.8rem, 9.3vw, 9rem)/.9 var(--display); letter-spacing: -.065em; transform: rotate(-5deg); }
+  .preview-copy { padding: 1.4rem 2.2rem 2.2rem; }
+  .preview-copy h3 { margin: 0 0 1rem; font: 500 clamp(2.7rem, 4.6vw, 4.5rem)/1 var(--display); letter-spacing: -.035em; }
+  .preview-copy p { margin: 0 0 1.8rem; font: 1rem/1.5 var(--body); white-space: pre-wrap; }
+  .preview-author { font: .7rem/1.4 var(--mono); }
+  .preview-lead .preview-author { color: var(--turquoise); }
+  .preview-type { background: var(--orange); padding: clamp(1.5rem, 3vw, 3rem); border-radius: 70px 0 0 0; margin-top: 2.5rem; }
+  .preview-type .preview-copy { padding: 0; }
+  .preview-type h3 { font: italic 400 clamp(2.8rem, 5.5vw, 5.3rem)/1.1 Georgia, serif; letter-spacing: -.055em; transform: rotate(-3deg); }
+  .preview-type p { margin: 1.5rem 0 2rem; }
+  .preview-aside { display: grid; grid-template-columns: .65fr 1fr; gap: 1.5rem; align-items: center; align-self: end; }
+  .preview-aside .preview-image { aspect-ratio: .83; background: var(--turquoise); }
+  .preview-aside .preview-image > span { font: 500 1.1rem/1.2 var(--display); transform: rotate(-90deg); letter-spacing: .03em; }
+  .preview-aside .preview-copy { padding: 0; }
+  .preview-aside h3 { font-size: clamp(2rem, 3.3vw, 3.2rem); }
+  .preview-aside p { margin-bottom: 1.5rem; }
+  /* Contributors retain their own artwork and typography; preview graphics are never substituted. */
+  .published-grid :global(.work-card) { grid-column: auto; }
+  .published-grid :global(.work-card:first-child) { grid-row: span 2; }
+  .published-grid :global(.work-card-art) { margin-top: 0; background: transparent; }
+  .published-grid :global(.work-card-copy) { min-height: 0; }
+  .published-grid :global(.work-card:first-child h3) { font-size: clamp(2.5rem, 4.5vw, 4.5rem); }
+  @media(max-width:760px) {
+    .preview-notice { font-size: .6rem; gap: .5rem; margin-bottom: 1rem; }
+    .editorial-grid { grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 1.8rem 1.25rem; }
+    .preview-lead { grid-column: 1 / -1; grid-row: auto; }
+    .preview-lead .preview-image { aspect-ratio: 1.75; }
+    .preview-image > span { font-size: clamp(3.8rem, 15vw, 6.5rem); }
+    .preview-copy { padding: 1rem 1.3rem 1.5rem; }
+    .preview-copy h3 { font-size: 2.7rem; }
+    .preview-copy p { font-size: .9rem; margin-bottom: 1.3rem; }
+    .preview-type { padding: 1.4rem .85rem; align-self: stretch; display: flex; align-items: center; }
+    .preview-type h3 { font-size: clamp(1.7rem, 7vw, 3rem); }
+    .preview-type p { margin-block: 1.2rem 1.5rem; }
+    .preview-aside { display: block; align-self: stretch; }
+    .preview-aside .preview-image { aspect-ratio: 1.6; margin-bottom: 1rem; }
+    .preview-aside .preview-image > span { font-size: 1rem; transform: rotate(-5deg); }
+    .preview-aside h3 { font-size: clamp(1.7rem, 7vw, 3rem); }
+    .preview-aside .preview-author, .preview-type .preview-author { font-size: .6rem; }
+    .published-grid :global(.work-card), .published-grid :global(.work-card:first-child) { grid-column: 1 / -1; grid-row: auto; }
+  }
+</style>

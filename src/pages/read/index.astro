@@ -1,0 +1,20 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import EditorialGrid from '../../components/EditorialGrid.astro';
+import { publishedWriting } from '../../lib/content';
+const works = await publishedWriting();
+---
+<Base title="Read" className="read-page">
+  <PageIntro eyebrow="Glosso Magazine" title="Read" />
+  <section class="wrap section" aria-label={works.length ? 'Published work' : 'Unpublished article layout previews'}>
+    <EditorialGrid works={works} />
+  </section>
+</Base>
+
+<style>
+  :global(.read-page .page-intro-inner) { min-height: 190px; }
+  :global(.read-page .page-intro-copy) { padding-block: 2rem; }
+  :global(.read-page .page-intro h1) { font-size: clamp(2.8rem, 4.5vw, 4.3rem); }
+  .section { padding-top: 2.5rem; }
+</style>

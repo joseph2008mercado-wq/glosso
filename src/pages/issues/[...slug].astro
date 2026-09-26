@@ -1,0 +1,39 @@
+---
+import Base from '../../layouts/Base.astro';
+import WorkCard from '../../components/WorkCard.astro';
+import { render, type CollectionEntry } from 'astro:content';
+import { displayDate, publishedIssues, publishedWriting, publishedContributors } from '../../lib/content';
+import { issueContents, issueMonth } from '../../lib/publication';
+
+export async function getStaticPaths() {
+  const issues = await publishedIssues();
+  return issues.map((issue) => ({ params: { slug: issue.id }, props: { issue } }));
+}
+
+interface Props { issue: CollectionEntry<'issues'>; }
+const { issue } = Astro.props;
+const { Content } = await render(issue);
+const contents = issueContents(issue, await publishedWriting());
+const creditIds = issue.data.credits.length ? issue.data.credits : [...new Set(contents.flatMap((work) => work.data.contributors))];
+const people = await publishedContributors();
+const credits = creditIds.map((id) => people.find((person) => person.id === id)).filter((person) => !!person);
+const canonical = new URL(`/issues/${issue.id}/`, Astro.site).href;
+const schema = {
+  '@context': 'https://schema.org', '@type': 'PublicationIssue', '@id': canonical, url: canonical,
+  name: issue.data.title, description: issue.data.description, datePublished: issue.data.published.toISOString(),
+  image: new URL(issue.data.cover, Astro.site).href,
+  isPartOf: { '@type': 'Periodical', name: 'Glosso Magazine', url: new URL('/issues/', Astro.site).href },
+  contributor: credits.map((person) => ({ '@type': 'Person', name: person!.data.name, url: new URL(`/contributors/${person!.id}/`, Astro.site).href })),
+  hasPart: contents.map((work) => ({ '@type': work.data.kind === 'visual-art' ? 'VisualArtwork' : 'Article', name: work.data.title, url: new URL(`/read/${work.id}/`, Astro.site).href })),
+  encoding: issue.data.pdf ? { '@type': 'MediaObject', encodingFormat: 'application/pdf', contentUrl: new URL(issue.data.pdf, Astro.site).href } : undefined,
+};
+---
+<Base title={issue.data.title} description={issue.data.description} image={issue.data.cover} imageAlt={issue.data.coverAlt} structuredData={schema}>
+  <header class="wrap work-header"><a class="back-link" href="/issues/">← Issues</a><div class="work-info"><span>Glosso Magazine</span><span>{issue.data.edition === 'special' ? 'Special edition' : 'Monthly issue'}</span><time datetime={issue.data.published.toISOString()}>{displayDate(issue.data.published)}</time>{issue.data.edition === 'monthly' && <time datetime={issueMonth(issue)}>{issueMonth(issue)}</time>}</div><h1>{issue.data.title}</h1>{issue.data.subtitle && <p class="subtitle">{issue.data.subtitle}</p>}<p class="issue-description">{issue.data.description}</p><div class="issue-format-links"><a class="pill-link" href="#contents">Contents <span aria-hidden="true">↓</span></a>{issue.data.pdf && <a class="quiet-link" href={issue.data.pdf} download={issue.data.pdf.startsWith('/')}>Download PDF <span aria-hidden="true">↓</span></a>}</div></header>
+  <section class="wrap issue-detail"><img src={issue.data.cover} alt={issue.data.coverAlt ?? 'BLANK'} /><div class="prose">{issue.body?.trim() ? <Content /> : <p>BLANK</p>}<h2>Credits</h2>{credits.length ? <ul>{credits.map((person) => <li><a href={`/contributors/${person!.id}/`}>{person!.data.name}</a></li>)}</ul> : <p>BLANK</p>}</div></section>
+  <section class="wrap section" id="contents"><div class="section-heading"><h2>Contents</h2></div>{contents.length ? <div class="work-grid">{contents.map((work) => <WorkCard work={work} />)}</div> : <p class="no-contents">BLANK</p>}</section>
+</Base>
+<style>
+  .issue-format-links { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 2rem; margin-top: 2rem; }
+  #contents { scroll-margin-top: 2rem; }
+</style>

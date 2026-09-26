@@ -1,0 +1,10 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import LegalDraftNotice from '../../components/LegalDraftNotice.astro';
+---
+<Base title="Disclaimer" noindex>
+  <PageIntro eyebrow="Legal" title="Disclaimer" />
+  <div class="wrap"><LegalDraftNotice /></div>
+  <section class="wrap legal-body"><aside><a class="back-link" href="/legal/">← Legal</a></aside><div class="prose"><h2>Individual voices</h2><p>Creative work and opinions belong to their makers. Publication by Glosso does not mean that every contributor speaks for Glosso Collective, nor does the collective speak for every contributor.</p><h2>Information</h2><p>We aim to keep site information accurate, but details may change. References and links to outside sources are provided for context and do not imply endorsement.</p><h2>Professional advice</h2><p>Material on this art and literary site is for reading and cultural discussion. It is not professional legal, medical or financial advice.</p></div></section>
+</Base>

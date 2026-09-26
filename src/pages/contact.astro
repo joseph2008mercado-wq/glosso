@@ -1,0 +1,22 @@
+---
+import Base from '../layouts/Base.astro';
+import PageIntro from '../components/PageIntro.astro';
+import { site } from '../data/site';
+---
+<Base title="Contact">
+  <PageIntro eyebrow="Glosso Collective" title="Contact" />
+  <section class="wrap contact-list" aria-label="Contact information">
+    <div class="contact-row"><h2>Email</h2><p>{site.contactEmail ? <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a> : 'BLANK'}</p></div>
+    <div class="contact-row"><h2>Location</h2><p>{site.location ?? 'BLANK'}</p></div>
+    <a class="text-link" href="/submissions/">Submissions <span aria-hidden="true">↗</span></a>
+  </section>
+</Base>
+<style>
+  .contact-list { padding: clamp(3rem, 6vw, 6rem) 0 clamp(6rem, 10vw, 10rem); }
+  .contact-row { display: grid; grid-template-columns: 1fr 1.1fr; gap: 3rem; padding: 2.5rem 0; border-top: 1px solid var(--line); }
+  .contact-row h2 { margin: 0; font: 600 clamp(1.8rem, 3vw, 3rem)/1.1 var(--display); letter-spacing: -.055em; }
+  .contact-row p { margin: 0; font: 500 clamp(1.2rem, 2vw, 1.6rem)/1.4 var(--body); overflow-wrap: anywhere; }
+  .contact-row p a { text-decoration: underline; text-underline-offset: .2em; }
+  .contact-list > .text-link { margin-top: 2.5rem; }
+  @media(max-width:760px) { .contact-row { grid-template-columns: 1fr; gap: 1rem; } }
+</style>

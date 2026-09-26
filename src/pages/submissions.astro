@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import PageIntro from '../components/PageIntro.astro';
+import { site } from '../data/site';
+---
+<Base title="Submissions">
+  <PageIntro eyebrow="Glosso Magazine" title="Submissions" />
+  <section class="wrap submissions-list" aria-label="Submission information">
+    <div class="submissions-row"><h2>Guidelines</h2><p>BLANK</p></div>
+    <div class="submissions-row"><h2>Instructions</h2><p>BLANK</p></div>
+    <div class="submissions-row"><h2>Email</h2><p>{site.submissionEmail ? <a href={`mailto:${site.submissionEmail}`}>{site.submissionEmail}</a> : 'BLANK'}</p></div>
+  </section>
+</Base>
+<style>
+  .submissions-list { padding: clamp(3rem, 6vw, 6rem) 0 clamp(6rem, 10vw, 10rem); }
+  .submissions-row { display: grid; grid-template-columns: 1fr 1.1fr; gap: 3rem; padding: 2.5rem 0; border-top: 1px solid var(--line); }
+  .submissions-row h2 { margin: 0; font: 600 clamp(1.8rem, 3vw, 3rem)/1.1 var(--display); letter-spacing: -.055em; }
+  .submissions-row p { margin: 0; font: 500 clamp(1.2rem, 2vw, 1.6rem)/1.4 var(--body); overflow-wrap: anywhere; white-space: pre-wrap; }
+  .submissions-row a { text-decoration: underline; text-underline-offset: .2em; }
+  @media(max-width:760px) { .submissions-row { grid-template-columns: 1fr; gap: 1rem; } }
+</style>

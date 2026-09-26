@@ -1,0 +1,54 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import PublicationImage from './PublicationImage.astro';
+import PublicationStage from './PublicationStage.astro';
+import { displayDate } from '../lib/format';
+interface Props { issue?: CollectionEntry<'issues'>; }
+const { issue } = Astro.props;
+---
+<div class="issue-feature">
+  <div class="issue-art">
+    <div class="folio-architecture"><PublicationStage /></div>
+    <div class="folio-sheet">
+    <span class="folio-ribbon-origin" data-ribbon-origin aria-hidden="true"></span>
+    {issue ? <a href={`/issues/${issue.id}/`} aria-label={`Read issue: ${issue.data.title}`}><PublicationImage src={issue.data.cover} alt={issue.data.coverAlt ?? 'BLANK'} ratio="3 / 4" priority /></a> :
+      <PublicationImage ratio="3 / 4" placeholderLabel="Unpublished issue cover placeholder" />}
+    </div>
+  </div>
+  <div class="issue-feature-copy" data-enter>
+    <div class="issue-status">{issue ? <span class="eyebrow">{displayDate(issue.data.published)}</span> : <span class="status-label">Unpublished · Layout preview</span>}</div>
+    <h2>{issue?.data.title ?? 'BLANK'}</h2>
+    <p>{issue?.data.description ?? 'BLANK'}</p>
+    {issue && <div class="issue-actions"><a class="pill-link" href={`/issues/${issue.id}/`}>Read Issue <span aria-hidden="true">↗</span></a>{issue.data.pdf && <a class="quiet-link" href={issue.data.pdf} download={issue.data.pdf.startsWith('/')}>PDF <span aria-hidden="true">↓</span></a>}</div>}
+  </div>
+</div>
+<style>
+  .issue-feature { position: relative; display: grid; grid-template-columns: 1.3fr 1fr; align-items: center; column-gap: clamp(2rem,5vw,5rem); padding: .75rem 0 0; }
+  .issue-art { position: relative; min-width: 0; min-height: 450px; display: grid; place-items: center; padding: 1.5rem 2rem; }
+  .folio-architecture { position: absolute; inset: 0; pointer-events: none; }
+  .folio-sheet { position: relative; z-index: 3; isolation: isolate; width: 280px; max-width: 62%; transform: rotate(-4deg); }
+  .folio-sheet :global(.publication-image) { outline: 1px solid var(--ink); position: relative; z-index: 2; }
+  .folio-sheet::before { content: ''; position: absolute; z-index: -1; inset: 0; background: var(--white); border: 1px solid var(--ink); transform: translate(11px, 8px) rotate(3deg); transition: transform var(--motion-ui) var(--motion-ease); }
+  .folio-sheet::after { content: ''; position: absolute; z-index: -2; inset: 0; background: var(--ink); transform: translate(-8px, 10px) rotate(-2deg); transition: transform var(--motion-ui) var(--motion-ease); }
+  .folio-ribbon-origin { position: absolute; right: 12%; bottom: 18px; width: 1px; height: 1px; }
+  .issue-art:has(a:is(:hover, :focus-visible)) .folio-sheet::before { transform: translate(17px, 8px) rotate(5deg); }
+  .issue-art:has(a:is(:hover, :focus-visible)) .folio-sheet::after { transform: translate(-12px, 12px) rotate(-4deg); }
+  .issue-art a { display: block; max-width: 100%; background: var(--white); }
+  .issue-feature-copy { position: relative; z-index: 3; min-width: 0; padding: 0 1rem 1rem 0; }
+  .issue-status { color: var(--deep-green); }
+  .issue-feature h2 { margin: 1.4rem 0 1.2rem; font: 600 clamp(3.25rem,6.2vw,5.8rem)/.98 var(--display); letter-spacing: -.055em; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .issue-feature h2::after { content: ''; display: block; width: 1.15em; height: .1em; background: var(--ink); margin-top: .3em; border-radius: 0 0 100% 0; }
+  .issue-feature p { max-width: 34ch; font-size: 1.1rem; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .issue-actions { display: flex; flex-wrap: wrap; gap: 1rem 2rem; margin-top: 1.5rem; }
+  @media(min-width:761px) and (max-width:1000px) { .issue-art { min-height: 350px; padding-inline: .75rem; } .folio-sheet { width: 220px; } }
+  @media(max-width:760px) {
+    .issue-feature { grid-template-columns: 1fr; gap: 1.6rem; padding: .5rem 0 0; }
+    .issue-art { min-height: 300px; padding: 1.5rem .5rem; margin-right: 26px; }
+    .folio-architecture { inset: 0 -2%; }
+    .folio-sheet { width: 200px; max-width: 64%; }
+    .issue-feature-copy { padding: 0 48px 0 .5rem; }
+    .issue-feature h2 { font-size: clamp(3rem,14.5vw,4.25rem); margin: 1rem 0 .75rem; }
+    .issue-feature p { font-size: 1rem; margin-bottom: 0; }
+  }
+  @media(prefers-reduced-motion:reduce) { .issue-art:has(a:is(:hover, :focus-visible)) .folio-sheet::before { transform: translate(11px, 8px) rotate(3deg); } .issue-art:has(a:is(:hover, :focus-visible)) .folio-sheet::after { transform: translate(-8px, 10px) rotate(-2deg); } }
+</style>

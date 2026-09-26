@@ -1,0 +1,23 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { displayPublicationDate, displayKind, publishedContributors } from '../lib/content';
+import PublicationImage from './PublicationImage.astro';
+import { browsingImage } from '../lib/publication-image';
+interface Props { work: CollectionEntry<'writing'>; }
+const { work } = Astro.props;
+const image = browsingImage(work.data);
+const people = await publishedContributors();
+const names = work.data.contributors.map((id) => people.find((person) => person.id === id)?.data.name ?? 'BLANK');
+---
+<article class:list={['work-card', { 'work-card-with-art': Boolean(image.src) }]}>
+  <a href={`/read/${work.id}/`} class="work-card-link">
+    {image.src && <div class="work-card-art"><PublicationImage {...image} /></div>}
+    <div class="work-card-copy">
+      <div class="work-card-meta"><span>{displayKind(work.data.kind)}</span><time datetime={work.data.published.toISOString()}>{displayPublicationDate(work.data.published)}</time></div>
+      <h3>{work.data.title}</h3>
+      <p>{work.data.summary}</p>
+      {names.length > 0 && <span class="work-byline">{names.join(', ')}</span>}
+      <span class="work-card-arrow" aria-hidden="true">↗</span>
+    </div>
+  </a>
+</article>

@@ -1,0 +1,16 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import BlankState from '../../components/BlankState.astro';
+import PublicationImage from '../../components/PublicationImage.astro';
+import { displayDate, publishedIssues } from '../../lib/content';
+const issues = await publishedIssues();
+const groups = [
+  { label: 'Monthly Issues', entries: issues.filter((issue) => issue.data.edition === 'monthly') },
+  { label: 'Special Editions', entries: issues.filter((issue) => issue.data.edition === 'special') },
+];
+---
+<Base title="Issues">
+  <PageIntro eyebrow="Glosso Magazine" title="Issues" />
+  {issues.length ? groups.filter((group) => group.entries.length).map((group) => <section class="wrap section" aria-label={group.label}><div class="section-heading"><h2>{group.label}</h2></div><div class="issue-grid">{group.entries.map((issue) => <article class="issue-card"><a href={`/issues/${issue.id}/`}><PublicationImage src={issue.data.cover} alt={issue.data.coverAlt ?? 'BLANK'} ratio="3 / 4" /><time class="eyebrow" datetime={issue.data.published.toISOString()}>{displayDate(issue.data.published)}</time><h2>{issue.data.title}</h2><p>{issue.data.description}</p><span class="text-link">Contents <span aria-hidden="true">↗</span></span></a></article>)}</div></section>) : <section class="wrap section" aria-label="Issue placeholder"><BlankState /></section>}
+</Base>

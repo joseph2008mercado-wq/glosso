@@ -1,0 +1,15 @@
+---
+import PublicationStage from './PublicationStage.astro';
+interface Props { eyebrow?: string; title: string; description?: string; }
+const { eyebrow, title, description = 'BLANK' } = Astro.props;
+---
+<section class="page-intro">
+  <div class="page-intro-sculpture" data-enter><PublicationStage variant="lintel" /></div>
+  <div class="wrap page-intro-inner">
+    <div class="page-intro-copy">
+      <div class="page-intro-top">{eyebrow && <span class="eyebrow">{eyebrow}</span>}</div>
+      <h1>{title}</h1>
+      <p>{description}</p>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,61 @@
+---
+import Base from '../layouts/Base.astro';
+import IssueFeature from '../components/IssueFeature.astro';
+import ArticleFeature from '../components/ArticleFeature.astro';
+import PublicationRibbon from '../components/PublicationRibbon.astro';
+import { displayDate, publishedContent } from '../lib/content';
+import { newest, mostRead } from '../lib/homepage';
+import { readership, engagementApproved } from '../data/readership';
+const { issues, writing: works, contributors: people, updates } = await publishedContent();
+const currentIssue = newest(issues.filter((issue) => issue.data.edition === 'monthly'));
+const latest = newest(works);
+const popular = engagementApproved && readership ? mostRead(works, readership.dailyViews, latest?.id) : undefined;
+const namesFor = (work: typeof latest) => work?.data.contributors.map((id) => people.find((person) => person.id === id)?.data.name ?? 'BLANK') ?? [];
+---
+<Base className="home-page">
+  <div class="publication-composition" data-publication-composition>
+  <PublicationRibbon />
+  <section class="current-issue wrap" aria-labelledby="current-issue-title">
+    <div class="home-heading" data-enter><h1 id="current-issue-title">Current <span>Issue</span></h1><a class="quiet-link" href="/issues/">Issue Archive <span aria-hidden="true">↗</span></a></div>
+    <IssueFeature issue={currentIssue} />
+  </section>
+  <div class="article-features wrap">
+    <ArticleFeature label="Latest Article" work={latest} names={namesFor(latest)} />
+    <ArticleFeature label="Most Read" work={popular} names={namesFor(popular)} unavailable />
+  </div>
+  </div>
+  <section class="updates wrap" aria-labelledby="updates-title" data-enter>
+    <div class="updates-heading"><h2 id="updates-title">Updates</h2>{!updates.length && <span class="status-label">Unpublished</span>}</div>
+    {updates.length ? <div class="updates-list">{updates.slice(0, 4).map((update) => <article><span class="eyebrow">{displayDate(update.data.published)}</span><h3>{update.data.href ? <a class="quiet-link" href={update.data.href}>{update.data.title}<span aria-hidden="true">↗</span></a> : update.data.title}</h3><p>{update.data.summary}</p></article>)}</div> : <p class="updates-placeholder">BLANK</p>}
+  </section>
+</Base>
+<style>
+  .publication-composition { position: relative; isolation: isolate; }
+  .current-issue { padding-block: 2.4rem 0; }
+  .home-heading { position: relative; z-index: 3; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1.5rem; margin-bottom: 1rem; }
+  .home-heading h1 { display: flex; align-items: baseline; flex-wrap: wrap; gap: .3em; margin: 0; font: 500 clamp(1.3rem,2.4vw,2.2rem)/1 var(--display); letter-spacing: -.04em; }
+  .home-heading h1 span { display: inline-block; font: italic 400 clamp(3.8rem,6.8vw,6.5rem)/.95 Georgia, serif; letter-spacing: -.055em; }
+  .home-heading .quiet-link { border: 1px solid var(--ink); border-radius: 50%; min-height: 70px; padding: .9rem 1.4rem; transform: rotate(-7deg); transition: background var(--motion-fast) var(--motion-ease), transform var(--motion-ui) var(--motion-ease); }
+  .home-heading .quiet-link:is(:hover, :focus-visible) { background: var(--turquoise); transform: rotate(0); }
+  .home-heading .quiet-link::after { display: none; }
+  .article-features { display: grid; grid-template-columns: 1.25fr 1fr; align-items: start; gap: clamp(2.5rem,7vw,7rem); padding-block: 150px 6rem; }
+  .updates { position: relative; margin-bottom: 5rem; padding: 2.5rem 3rem; background: var(--orange); border-radius: 0 80px 0 0; border-bottom: 10px solid var(--ink); }
+  .updates-heading { display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; }
+  .updates h2 { margin: 0; font: 500 1.8rem/1.2 var(--display); letter-spacing: -.025em; }
+  .updates-placeholder { margin: 1.5rem 0 0; }
+  .updates-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 2rem; margin-top: 2rem; }
+  .updates-list h3 { margin: .75rem 0; font: 500 1.5rem/1.2 var(--display); white-space: pre-wrap; overflow-wrap: anywhere; }
+  .updates-list h3 a { font: inherit; }
+  .updates-list p { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.5; }
+  @media(max-width:760px) {
+    .current-issue { padding-top: 1.8rem; }
+    .home-heading { align-items: start; margin-bottom: 1.2rem; gap: 1rem; }
+    .home-heading h1 { display: grid; gap: .1rem; font-size: .85rem; letter-spacing: .03em; }
+    .home-heading h1 span { font-size: clamp(3.5rem,15vw,4.5rem); }
+    .home-heading .quiet-link { font-size: .65rem; gap: .5rem; min-height: 62px; padding: .6rem .85rem; white-space: nowrap; }
+    .article-features { grid-template-columns: 1fr; gap: 5rem; padding-block: 5rem 3.5rem; padding-right: 32px; }
+    .updates { padding: 2rem 1.5rem; margin-bottom: 2rem; border-radius: 0 55px 0 0; }
+    .updates-list { grid-template-columns: 1fr; }
+  }
+  @media(prefers-reduced-motion:reduce) { .home-heading .quiet-link:is(:hover, :focus-visible) { transform: rotate(-7deg); } }
+</style>

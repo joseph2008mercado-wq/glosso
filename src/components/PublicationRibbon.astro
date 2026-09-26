@@ -1,0 +1,65 @@
+<svg class="publication-ribbon" data-publication-ribbon aria-hidden="true" focusable="false" fill="none">
+  <path data-connected-tongue pathLength="1" stroke="currentColor" stroke-linecap="butt" stroke-linejoin="round" />
+</svg>
+<script>
+  // One continuous path, measured from actual layout anchors. No guessed CSS
+  // offsets between independently drawn pieces, and no per-frame pointer work.
+  const composition = document.querySelector<HTMLElement>('[data-publication-composition]');
+  const svg = composition?.querySelector<SVGSVGElement>('[data-publication-ribbon]');
+  const tongue = svg?.querySelector<SVGPathElement>('[data-connected-tongue]');
+  const origin = composition?.querySelector<HTMLElement>('[data-ribbon-origin]');
+  const destination = composition?.querySelector<HTMLElement>('[data-ribbon-destination]');
+  const issue = composition?.querySelector<HTMLElement>('.current-issue');
+  const issueCopy = composition?.querySelector<HTMLElement>('.issue-feature-copy');
+  if (composition && svg && tongue && origin && destination && issue) {
+    let pending = 0;
+    function draw() {
+      if (!composition || !svg || !tongue || !origin || !destination || !issue) return;
+      const root = composition.getBoundingClientRect();
+      const start = origin.getBoundingClientRect();
+      const end = destination.getBoundingClientRect();
+      const issueBox = issue.getBoundingClientRect();
+      const sx = start.x + start.width / 2 - root.x;
+      const sy = start.y + start.height / 2 - root.y;
+      const ex = end.x + end.width / 2 - root.x;
+      const ey = end.y + end.height / 2 - root.y;
+      const compact = root.width <= 760;
+      let d: string;
+      if (compact) {
+        const lane = root.width - 24;
+        // Clear the copy before following the outer gutter. A fixed-depth
+        // bend cuts across titles when a wider mobile folio sits closer to them.
+        // offsetTop excludes the copy's transient entrance transform.
+        const copyParent = issueCopy?.offsetParent;
+        const copyTop = issueCopy && copyParent ? copyParent.getBoundingClientRect().top - root.y + issueCopy.offsetTop : sy + 148;
+        const exitY = Math.min(sy + 124, copyTop - 24);
+        const turn = exitY - sy;
+        d = `M${sx},${sy} C${sx},${sy + turn * .8} ${lane},${sy + turn * .15} ${lane},${exitY} L${lane},${ey - 84} Q${lane},${ey - 40} ${ex + 36},${ey - 40} Q${ex},${ey - 40} ${ex},${ey}`;
+      } else {
+        const y = issueBox.bottom - root.y + 34;
+        const left = issueBox.left - root.x + issueBox.width * .23;
+        const loop = issueBox.left - root.x + issueBox.width * .67;
+        const r = Math.min(64, issueBox.width * .06);
+        d = `M${sx},${sy} C${sx},${sy + 90} ${left},${y - 75} ${left},${y - 12} C${left},${y + 36} ${loop - 180},${y + 68} ${loop},${y + 68} C${loop + r * 1.6},${y + 68} ${loop + r * 1.6},${y - r} ${loop},${y - r} C${loop - r * 1.4},${y - r} ${loop - r * 1.2},${y + 23} ${loop + r * .4},${y + 23} L${ex - 65},${y + 23} Q${ex},${y + 23} ${ex},${y + 88} L${ex},${ey}`;
+      }
+      svg.setAttribute('viewBox', `0 0 ${root.width} ${root.height}`);
+      tongue.setAttribute('d', d);
+      tongue.setAttribute('stroke-width', compact ? '22' : '34');
+      svg.dataset.ready = 'true';
+    }
+    const schedule = () => { cancelAnimationFrame(pending); pending = requestAnimationFrame(draw); };
+    // Text/image size changes are covered, not just window resize. Reading and
+    // navigation remain fully available if this decorative enhancement is absent.
+    const observer = new ResizeObserver(schedule);
+    [composition, issue, origin, destination].forEach((element) => observer.observe(element));
+    document.fonts.ready.then(schedule);
+    window.addEventListener('resize', schedule, { passive: true });
+    schedule();
+  }
+</script>
+<style>
+  .publication-ribbon { position: absolute; z-index: 2; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; color: var(--orange); visibility: hidden; }
+  .publication-ribbon[data-ready] { visibility: visible; }
+  .publication-ribbon path { stroke-dasharray: 1; stroke-dashoffset: 0; }
+  .publication-ribbon[data-ready] path { animation: glosso-unfurl var(--motion-enter) var(--motion-ease) backwards; }
+</style>

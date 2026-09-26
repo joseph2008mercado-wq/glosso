@@ -1,0 +1,16 @@
+node_modules/
+.pnpm-store/
+dist/
+.astro/
+.env
+.env.*
+!.env.example
+private-submissions/
+legal-review/
+private-records/
+.wrangler/
+*.pem
+*.key
+*.p12
+*.pfx
+*.log

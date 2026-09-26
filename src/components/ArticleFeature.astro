@@ -1,0 +1,68 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { displayPublicationDate } from '../lib/format';
+import PublicationImage from './PublicationImage.astro';
+import { browsingImage } from '../lib/publication-image';
+interface Props {
+  label: string;
+  work?: CollectionEntry<'writing'>;
+  names?: string[];
+  unavailable?: boolean;
+}
+const { label, work, names = [], unavailable = false } = Astro.props;
+const id = label.toLowerCase().replaceAll(' ', '-');
+const image = work ? browsingImage(work.data) : undefined;
+---
+<section class:list={['article-feature', { 'article-secondary': unavailable }]} aria-labelledby={id}>
+  {unavailable && <span class="ribbon-destination" data-ribbon-destination aria-hidden="true"></span>}
+  <div class="feature-heading"><h2 id={id}>{label}</h2>{!work && <span class="status-label">{unavailable ? 'Data unavailable' : 'Unpublished'}</span>}</div>
+  {work ? <article class="feature-card">
+    <a href={`/read/${work.id}/`} class:list={['feature-link', { 'has-image': Boolean(image?.src) }]}>
+      {image?.src && <div class="feature-art"><PublicationImage {...image} /></div>}
+      <div><time class="eyebrow" datetime={work.data.published.toISOString()}>{displayPublicationDate(work.data.published)}</time><h3>{work.data.title}</h3><p>{work.data.summary}</p><span class="feature-byline">{names.length ? names.join(', ') : 'BLANK'}</span><span class="feature-arrow" aria-hidden="true">↗</span></div>
+    </a>
+  </article> : <article class:list={['feature-card', 'feature-placeholder', { 'feature-orange': unavailable }]} aria-label={unavailable ? 'Article layout placeholder; no readership data' : 'Unpublished article layout placeholder'}>
+    <h3>BLANK</h3><p>BLANK</p><span class="feature-byline" role="group" aria-label="Contributor placeholder">BLANK</span>
+  </article>}
+</section>
+<style>
+  .article-feature { position: relative; min-width: 0; padding-top: 1.5rem; }
+  .article-feature:not(.article-secondary)::before { content: ''; position: absolute; top: 0; left: 0; width: 72px; height: 7px; background: var(--orange); border-radius: 0 0 100% 0; }
+  .feature-heading { position: relative; z-index: 3; display: flex; align-items: center; flex-wrap: wrap; gap: .8rem; margin-bottom: 1.5rem; }
+  .feature-heading h2 { margin: 0 auto 0 0; font: 500 clamp(1.25rem,2vw,1.8rem)/1.2 var(--display); letter-spacing: -.025em; }
+  .feature-card { position: relative; z-index: 3; min-width: 0; }
+  .feature-placeholder { position: relative; padding: 2.5rem 2rem 2rem; min-height: 330px; }
+  .article-feature:not(.article-secondary) .feature-placeholder { background: var(--turquoise); border-radius: 0 100px 0 50px; }
+  .article-feature:not(.article-secondary) .feature-placeholder::before { content: ''; position: absolute; z-index: -1; inset: 18px 18px -14px -12px; background: var(--ink); border-radius: 0 100px 0 50px; }
+  .article-feature:not(.article-secondary) .feature-placeholder::after { content: ''; position: absolute; z-index: -1; inset: 0; background: var(--turquoise); border-radius: inherit; }
+  .feature-card.feature-placeholder h3 { position: relative; width: fit-content; margin: .5rem 0 2rem; font: italic 500 clamp(3.5rem,7.5vw,7rem)/1.05 Georgia, serif; letter-spacing: -.06em; transform: rotate(-5deg); }
+  .article-secondary { margin-top: 5rem; padding: 4rem 2.5rem 2.5rem; background: var(--ink); color: var(--paper); position: relative; border-radius: 90px 0 60px 0; }
+  .article-secondary::after { content: ''; position: absolute; left: 20%; right: 0; bottom: -14px; height: 14px; background: var(--turquoise); transform: skewX(-35deg); transform-origin: top right; }
+  .ribbon-destination { position: absolute; top: 30px; right: 42px; width: 1px; height: 1px; }
+  .article-secondary .feature-heading { padding-right: 0; }
+  .article-secondary .status-label { color: var(--turquoise); }
+  .article-secondary .feature-placeholder { min-height: 180px; padding: 1rem 0 0; }
+  .article-secondary .feature-card.feature-placeholder h3 { font: 600 clamp(2.8rem,4.5vw,4.5rem)/1.1 var(--display); letter-spacing: -.055em; color: var(--turquoise); }
+  .article-secondary .feature-card.feature-placeholder h3 { transform: none; }
+  .article-secondary :global(:focus-visible) { outline-color: var(--turquoise); }
+  .feature-card h3 { margin: 0 0 1rem; font: 500 clamp(2rem,3.5vw,3.4rem)/1.05 var(--display); letter-spacing: -.035em; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .feature-card p { line-height: 1.5; margin: 0 0 1.5rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .feature-byline { font: .7rem/1.4 var(--mono); }
+  .feature-link { display: block; position: relative; }
+  .feature-link.has-image { display: grid; gap: 1.5rem; }
+  .feature-art { position: relative; isolation: isolate; margin: 0 .6rem .6rem 0; transition: transform var(--motion-ui) var(--motion-ease); }
+  .feature-art :global(.publication-image) { outline: 1px solid var(--ink); }
+  .feature-art::before { content: ''; position: absolute; z-index: -1; inset: .6rem -.6rem -.6rem .6rem; background: var(--turquoise); }
+  .feature-link:is(:hover, :focus-visible) .feature-art { transform: translateY(var(--motion-lift)); }
+  .feature-link h3 { margin-top: .75rem; }
+  .feature-arrow { display: inline-block; margin-left: 1rem; }
+  @media(max-width:760px) {
+    .feature-placeholder { min-height: 265px; padding: 1.4rem 1.1rem; }
+    .feature-card h3 { font-size: 2.2rem; }
+    .feature-card.feature-placeholder h3 { font-size: clamp(3rem,15vw,4.8rem); }
+    .article-secondary { margin-top: 0; margin-left: 1.2rem; padding: 3.5rem 1.3rem 2rem; border-radius: 60px 0 35px 0; }
+    .article-secondary .feature-card.feature-placeholder h3 { font-size: clamp(2.5rem,13vw,3.5rem); }
+    .feature-link.has-image { grid-template-columns: 1fr; }
+  }
+  @media(prefers-reduced-motion:reduce) { .feature-link:is(:hover, :focus-visible) .feature-art { transform: none; } }
+</style>

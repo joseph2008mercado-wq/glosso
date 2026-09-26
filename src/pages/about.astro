@@ -1,0 +1,20 @@
+---
+import Base from '../layouts/Base.astro';
+import PageIntro from '../components/PageIntro.astro';
+---
+<Base title="About" structuredData={{ '@context': 'https://schema.org', '@type': 'AboutPage', name: 'About', url: new URL('/about/', Astro.site).href }}>
+  <PageIntro eyebrow="Glosso" title="About" />
+  <div class="wrap about-list">
+    <section class="about-row" aria-labelledby="about-glosso"><h2 id="about-glosso">Glosso</h2><p>BLANK</p></section>
+    <section class="about-row" aria-labelledby="about-collective"><h2 id="about-collective">Glosso Collective</h2><p>BLANK</p></section>
+    <section class="about-row" aria-labelledby="about-magazine"><h2 id="about-magazine">Glosso Magazine</h2><div><p>BLANK</p><a class="text-link" href="/issues/">Issues <span aria-hidden="true">↗</span></a></div></section>
+  </div>
+</Base>
+<style>
+  .about-list { padding: clamp(3rem, 6vw, 6rem) 0 clamp(5rem, 9vw, 9rem); }
+  .about-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 4rem; padding: clamp(2rem, 4vw, 4rem) 0; border-top: 1px solid var(--line); }
+  .about-row h2 { margin: 0; font: 600 clamp(2rem, 3.5vw, 3.7rem)/1.05 var(--display); letter-spacing: -.065em; }
+  .about-row p { margin: 0; font: 500 clamp(1.2rem, 2vw, 1.6rem)/1.45 var(--body); white-space: pre-wrap; }
+  .about-row .text-link { margin-top: 3rem; }
+  @media(max-width:760px) { .about-row { grid-template-columns: 1fr; gap: 1.2rem; padding: 2.5rem 0; } }
+</style>

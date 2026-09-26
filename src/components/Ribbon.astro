@@ -1,0 +1,7 @@
+---
+interface Props { className?: string; }
+const { className = '' } = Astro.props;
+---
+<svg class:list={['ribbon', className]} viewBox="0 0 360 144" fill="none" aria-hidden="true" focusable="false">
+  <path pathLength="1" d="M4 34H166C254 34 254 110 180 110H150C87 110 112 50 186 78L350 128" stroke="currentColor" stroke-width="26" stroke-linecap="butt" />
+</svg>

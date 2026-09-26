@@ -1,0 +1,39 @@
+---
+interface Props { variant?: 'folio' | 'lintel'; }
+const { variant = 'folio' } = Astro.props;
+---
+{variant === 'folio' ? (
+  <svg class="publication-stage stage-folio" viewBox="0 0 660 480" fill="none" aria-hidden="true" focusable="false">
+    <!-- An open aperture around the work, not a plinth beneath it. Its two
+         counter-curves leave a deliberate pause on the right for the voice. -->
+    <g class="stage-upright">
+      <path class="stage-ink" d="M20 284C8 157 136 77 294 62C412 51 529 80 624 128L602 177C505 129 400 108 299 119C174 132 84 193 82 284Z" />
+      <path class="stage-turquoise" d="M35 281C27 169 146 94 299 80C411 70 521 96 610 141L591 187C500 145 399 122 304 132C182 145 96 200 92 281Z" />
+      <path class="stage-cream" d="M35 281C27 169 146 94 299 80C411 70 521 96 610 141L606 150C519 106 411 80 300 90C153 104 43 177 47 281Z" />
+    </g>
+    <g class="stage-countercurve">
+      <path class="stage-turquoise" d="M35 281C60 385 220 452 402 421C468 410 536 387 607 352L584 310C521 340 457 364 396 374C240 401 120 358 92 281Z" />
+      <path class="stage-ink" d="M35 281C60 372 215 427 396 397C459 387 525 363 593 332L576 295C516 326 453 345 391 355C247 379 126 344 92 281Z" />
+      <path class="stage-cream" d="M35 281C60 372 215 427 396 397C459 387 525 363 593 332L589 324C522 355 457 379 395 389C216 419 67 366 46 281Z" />
+    </g>
+  </svg>
+) : (
+  <svg class="publication-stage stage-lintel" viewBox="0 0 500 300" fill="none" aria-hidden="true" focusable="false">
+    <path class="stage-ink" d="M111 256L385 81L452 107L178 282Z" />
+    <path class="stage-orange" d="M154 246L154 119C154 27 362 27 362 119V207H310V119C310 92 206 92 206 119V246Z" />
+    <path class="stage-cream" d="M154 119C154 27 362 27 362 119H310C310 92 206 92 206 119Z" />
+    <path class="stage-orange" d="M65 171L394 226L394 257L65 202Z" />
+    <path class="stage-ink" d="M65 171L82 162L411 217L394 226Z" />
+  </svg>
+)}
+<style>
+  .publication-stage { display: block; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  .stage-ink { fill: var(--ink); }
+  .stage-turquoise { fill: var(--turquoise); }
+  .stage-cream { fill: var(--paper); }
+  .stage-orange { fill: var(--orange); }
+  .stage-upright, .stage-countercurve { transform-origin: 14% 58%; transition: transform var(--motion-ui) var(--motion-ease); }
+  :global(.issue-art:has(a:is(:hover, :focus-visible))) .stage-upright { transform: rotate(-2deg); }
+  :global(.issue-art:has(a:is(:hover, :focus-visible))) .stage-countercurve { transform: rotate(2deg); }
+  @media(prefers-reduced-motion:reduce) { :global(.issue-art:has(a:is(:hover, :focus-visible))) :is(.stage-upright, .stage-countercurve) { transform: none; } }
+</style>

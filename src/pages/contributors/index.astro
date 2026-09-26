@@ -1,0 +1,11 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import BlankState from '../../components/BlankState.astro';
+import { publishedContributors } from '../../lib/content';
+const contributors = await publishedContributors();
+---
+<Base title="Contributors">
+  <PageIntro eyebrow="Glosso Magazine" title="Contributors" />
+  {contributors.length ? <section class="wrap contributor-grid" aria-label="Contributors">{contributors.map((person) => <article class="contributor-card"><a href={`/contributors/${person.id}/`}>{person.data.portrait && <img src={person.data.portrait} alt={`Portrait of ${person.data.name}`} loading="lazy" />}<span class="eyebrow">{person.data.role ?? 'BLANK'}</span><h2>{person.data.name}</h2><span class="text-link">Profile <span aria-hidden="true">↗</span></span></a></article>)}</section> : <section class="wrap section" aria-label="Contributor placeholder"><BlankState /></section>}
+</Base>
