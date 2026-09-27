@@ -53,7 +53,7 @@ const current = (href: string) => href === '/' ? path === href : path === href |
     {authors.map((name) => <meta name="author" content={name} />)}
     {structuredData && <script type="application/ld+json" set:html={JSON.stringify(structuredData).replaceAll('<', '\\u003c')} />}
     {noindex && <meta name="robots" content="noindex,nofollow" />}
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/art/glosso-frog.png" />
     <link rel="canonical" href={canonical} />
     <title>{pageTitle}</title>
   </head>
