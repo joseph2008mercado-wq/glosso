@@ -16,6 +16,7 @@ This is the source for glosso.org. Build and maintain it as a contemporary indep
 
 ## Identity
 
+- The owner expressly authorized public/llms.txt to publish their exact definition, Miami location and supplied current-mascot description. Preserve this wording; this narrow authorization does not permit generating other editorial copy or imply AI-training permission. The file is a public reference, not a guarantee of crawler ingestion or search placement.
 - Glosso is an artistic and literary movement emphasizing oration, prosody and form in pursuit of the truest articulation of an experience. It rejects institutional and performative conventions in favor of the expressive possibilities of the individual's tongue.
 - Glosso Collective is the founding organization, based in Miami and the Tri-State area. Glosso Magazine is its independent digital and forthcoming physical publication. This description is design context, not approved site copy.
 - Do not prescribe a house aesthetic or writing style to contributors. Preserve the individuality of each work.
