@@ -1,5 +1,8 @@
 # Legal review and publication status
 
+> Current status — 2026-09-26: the owner explicitly approved publication and removal of administrative approval blockers. Public privacy/cookie notices now match verified application behavior and distinguish conditional Cloudflare services. Public draft banners are removed. Independent legal review and Cloudflare account verification are not claimed; their flags remain false and informational. Private contracts and review records remain private. Earlier blocked-release observations below are historical, not requests to obtain the same approval again.
+
+
 Updated 2026-09-24. Start with the local, gitignored `legal-review/README.md` for the completed six-document packet. It incorporates the operator's adults-only/international submission policy, independent operation, no mailing list or monetization, and approved nonexclusive worldwide rights model.
 
 Use [FINAL_LAUNCH_CHECKLIST.md](FINAL_LAUNCH_CHECKLIST.md) as the single current checklist, [LAUNCH_AUDIT.md](LAUNCH_AUDIT.md) for test evidence, and [DEPLOYMENT.md](DEPLOYMENT.md) for account steps.

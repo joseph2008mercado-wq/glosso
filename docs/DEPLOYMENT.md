@@ -1,5 +1,8 @@
 # Cloudflare Workers static deployment runbook
 
+> Current status — 2026-09-26: the owner explicitly approved publication and removal of administrative approval blockers. Public privacy/cookie notices now match verified application behavior and distinguish conditional Cloudflare services. Public draft banners are removed. Independent legal review and Cloudflare account verification are not claimed; their flags remain false and informational. Private contracts and review records remain private. Earlier blocked-release observations below are historical, not requests to obtain the same approval again.
+
+
 Updated 2026-09-26. Hosting target: the existing `glosso` Worker, not a new Cloudflare Pages project. This runbook does not approve public release, legal text, analytics activation or DNS changes. Use [FINAL_LAUNCH_CHECKLIST.md](FINAL_LAUNCH_CHECKLIST.md) for outstanding approvals.
 
 ## Repository and static configuration
@@ -36,7 +39,7 @@ References: [Workers Builds configuration](https://developers.cloudflare.com/wor
 
 ## Mandatory release safeguard
 
-`pnpm build:launch` runs the static build, repository audit and launch check in sequence. It deliberately exits unsuccessfully while the four `launch-approval.json` approvals are false or public legal drafts remain. A failed build must prevent the deploy command from running. Do not replace it with `pnpm build`, append a failure-ignoring command, remove draft notices, or change approval flags just to pass CI. A passing check is not legal certification or independent deployment authorization.
+`pnpm build:launch` runs the static build, repository audit and launch check in sequence. It requires operatorApproved, publicPoliciesApproved and publicContentAndRightsReviewed; the owner explicitly granted these approvals on 2026-09-26. Independent legal review and account verification remain informational, not fabricated approvals. Private files and any remaining draft-marked public pages still block. A failed build must prevent the deploy command from running. Do not replace it with `pnpm build`, append a failure-ignoring command, remove draft notices, or change approval flags just to pass CI. A passing check is not legal certification or independent deployment authorization.
 
 **Wrangler does not enforce this guard itself.** `npx wrangler deploy` can upload an existing local `dist`, including unreviewed legal pages. Do not run it manually unless the guarded build has just passed for the same reviewed checkout and release is authorized. A dry run (`npx wrangler deploy --dry-run`) validates configuration without publishing and is not release approval.
 
@@ -61,7 +64,7 @@ pnpm audit:repository
 pnpm build:launch
 ```
 
-The last command is expected to fail until release blockers are resolved. Use `pnpm preview` for local inspection, not public publication. The isolated release test covers populated monthly/special issues and excludes drafts/scheduled work without inserting fixtures into the live site. Check output includes `404.html`, `robots.txt` and `sitemap.xml`.
+The last command must pass before release. The previous expected failure for four administrative flags has been superseded by explicit operator approval. Use `pnpm preview` for local inspection, not public publication. The isolated release test covers populated monthly/special issues and excludes drafts/scheduled work without inserting fixtures into the live site. Check output includes `404.html`, `robots.txt` and `sitemap.xml`.
 
 The repository audit reads staged/tracked bytes. Run it again after explicit staging; a prior pass does not approve new files. Review `git diff --cached` and relevant history. Ignore rules do not erase tracked files or old commits; this audit is a limited safeguard, not exhaustive secret/copyright review. If a secret was exposed, revoke/rotate it and review remote/history cleanup rather than merely deleting the current file.
 

@@ -9,11 +9,13 @@
     "test:publishing": "node scripts/check-publication.mjs",
     "test:release-build": "node scripts/check-release-build.mjs",
     "test:homepage": "node scripts/check-homepage.mjs && node scripts/check-rendering.mjs",
+    "test:images": "node scripts/check-images.mjs --test",
+    "test:launch": "node scripts/check-launch-test.mjs",
     "audit:repository": "node scripts/check-repository.mjs",
     "check:launch": "node scripts/check-launch.mjs",
     "build:launch": "pnpm build && pnpm audit:repository && pnpm check:launch",
     "dev": "astro dev --host 127.0.0.1",
-    "build": "astro check && astro build",
+    "build": "astro check && astro build && node scripts/check-images.mjs",
     "preview": "astro preview --host 127.0.0.1"
   },
   "dependencies": {

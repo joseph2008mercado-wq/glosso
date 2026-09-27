@@ -1,5 +1,8 @@
 # Glosso — final review report and launch checklist
 
+> Current status — 2026-09-26: the owner explicitly approved publication and removal of administrative approval blockers. Public privacy/cookie notices now match verified application behavior and distinguish conditional Cloudflare services. Public draft banners are removed. Independent legal review and Cloudflare account verification are not claimed; their flags remain false and informational. Private contracts and review records remain private. Earlier blocked-release observations below are historical, not requests to obtain the same approval again.
+
+
 2026-09-24 legal review; deployment notes updated 2026-09-26. **Review drafts complete; not cleared for public release.** This is the one current decision report. The [six-document packet](../legal-review/README.md) is private/gitignored. [Implementation cross-check](../legal-review/IMPLEMENTATION-CROSSCHECK.md) covers every draft section; [technical evidence](LAUNCH_AUDIT.md) and [deployment instructions](DEPLOYMENT.md) support this report. The repository is now populated; GitHub publication does not approve a website deployment or legal drafts.
 
 ## 1. Verified defects fixed

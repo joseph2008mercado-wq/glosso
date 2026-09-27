@@ -28,7 +28,7 @@ try {
   await symlink(join(project, 'node_modules'), join(sandbox, 'node_modules'), process.platform === 'win32' ? 'junction' : 'dir');
   await mkdir(join(sandbox, 'publication-assets'));
   for (const name of ['released', 'draft', 'scheduled', 'released-thumb', 'draft-thumb', 'scheduled-thumb']) await cp(join(project, 'public/art/glosso-frog.png'), join(sandbox, 'publication-assets', name + '.png'));
-  await entry('contributors', 'fixture-person', 'name: Glosso\napproved: true\ndraft: false');
+  await entry('contributors', 'fixture-person', 'name: Glosso\napproved: true\ndraft: false\nportrait: /media/released.png\nportraitAlt: Glosso frog');
   await entry('issues', 'fixture-monthly', release + 'title: Glosso\ndescription: Glosso\nedition: monthly\nmonth: "2020-01"\ncover: /media/released.png\ncontents: [fixture-work]\ncredits: [fixture-person]');
   await entry('issues', 'fixture-special', release.replace(date, '2020-02-01T12:00:00Z') + 'title: Glosso\ndescription: Glosso\nedition: special\ncover: /media/released.png\npdf: https://example.com/fixture.pdf');
   const work = release + 'title: Glosso\nsummary: Glosso\nkind: experimental\ncontributors: [fixture-person]\nissue: fixture-monthly\ncover: /media/released.png\nthumbnail:\n  src: /media/released-thumb.png\n  fit: cover\n  position: [25, 75]';
@@ -41,6 +41,7 @@ try {
   const output = join(sandbox, 'dist');
   const html = (path) => readFile(join(output, path), 'utf8');
   const home = await html('index.html');
+  for (const route of ['contributors/index.html', 'contributors/fixture-person/index.html']) assert.match(await html(route), /alt="Glosso frog"/);
   assert.match(home, /href="\/issues\/fixture-monthly\/"/);
   assert.doesNotMatch(home, /href="\/issues\/fixture-special\/"/);
   assert.match(home, /Data unavailable/);

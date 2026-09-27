@@ -1,0 +1,18 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import { site } from '../../data/site';
+---
+<Base title="Cookie Policy">
+  <PageIntro eyebrow="Legal" title="Cookie Policy" />
+  <section class="wrap legal-body"><aside><a class="back-link" href="/legal/">← Legal</a></aside><div class="prose">
+    <h2>Website storage</h2>
+    <p>The Glosso website application does not set cookies or store visitor information in local storage or session storage. It has no advertising, account-login or shopping-cart cookies.</p>
+    <h2>Cloudflare</h2>
+    <p>Cloudflare Web Analytics, if enabled for this site, does not use cookies or local storage for its usage metrics, according to <a href="https://www.cloudflare.com/web-analytics/">Cloudflare’s documentation</a>. This is separate from Cloudflare security services, which may set cookies when their features are enabled. The exact security cookies depend on the hosting configuration; see <a href="https://developers.cloudflare.com/fundamentals/reference/policies-compliances/cloudflare-cookies/">Cloudflare’s cookie documentation</a>.</p>
+    <h2>Your browser controls</h2>
+    <p>You can review, delete or block cookies through your browser settings. Blocking a security cookie may affect a Cloudflare security check. This website does not provide a separate cookie-preference manager.</p>
+    <h2>Questions</h2>
+    <p>For questions, email <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>. See the <a href="/legal/privacy/">Privacy Policy</a> for information about hosting, analytics and correspondence.</p>
+  </div></section>
+</Base>

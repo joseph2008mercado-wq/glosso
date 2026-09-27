@@ -1,6 +1,7 @@
 {
-  "operatorApproved": false,
+  "operatorApproved": true,
+  "publicPoliciesApproved": true,
   "legalReviewComplete": false,
   "accountConfigurationVerified": false,
-  "publicContentAndRightsReviewed": false
+  "publicContentAndRightsReviewed": true
 }

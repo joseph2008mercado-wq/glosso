@@ -8,7 +8,7 @@ export const GET: APIRoute = async ({ site }) => {
     ...content.writing.map((work) => `/read/${work.id}/`),
     ...content.issues.map((issue) => `/issues/${issue.id}/`),
     ...content.contributors.map((person) => `/contributors/${person.id}/`)];
-  // Legal drafts and unreleased content are absent. No fabricated lastmod dates.
+  // Utility/legal pages are not listed; they remain crawlable. Unreleased content is absent.
   return new Response('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' +
     paths.map((path) => `<url><loc>${escapeXml(new URL(path, site).href)}</loc></url>`).join('') + '</urlset>',
     { headers: { 'Content-Type': 'application/xml; charset=utf-8' } });

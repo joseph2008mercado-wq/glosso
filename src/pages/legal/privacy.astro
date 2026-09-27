@@ -1,10 +1,24 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PageIntro from '../../components/PageIntro.astro';
-import LegalDraftNotice from '../../components/LegalDraftNotice.astro';
+import { site } from '../../data/site';
 ---
-<Base title="Privacy Policy" noindex>
+<Base title="Privacy Policy">
   <PageIntro eyebrow="Legal" title="Privacy Policy" />
-  <div class="wrap"><LegalDraftNotice /></div>
-  <section class="wrap legal-body"><aside><a class="back-link" href="/legal/">← Legal</a></aside><div class="prose"><h2>What we collect</h2><p>This website does not offer accounts, run analytics, or set its own tracking cookies. If you contact us by email once contact information is published, the information you choose to send will be used to respond to you and manage that correspondence.</p><h2>Technical requests</h2><p>Like other websites, the hosting provider may process basic technical information, such as your IP address and request details, to deliver the site and maintain security. This site also loads its typefaces from Google Fonts, so your browser may contact Google to retrieve them.</p><h2>External links and files</h2><p>Links to other websites have their own privacy practices. Downloading a magazine PDF or playing an audio file may create normal web request records with the hosting provider.</p><h2>Questions</h2><p>Our contact details will be listed on the <a href="/contact/">contact page</a> when available. This policy will be updated if the site’s data practices change.</p></div></section>
+  <section class="wrap legal-body"><aside><a class="back-link" href="/legal/">← Legal</a></aside><div class="prose">
+    <h2>About this website</h2>
+    <p>Glosso is an independently operated art and literary publication run by an individual, not a registered business. Privacy questions can be sent to <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>.</p>
+    <h2>Information you provide</h2>
+    <p>This website has no visitor accounts, mailing list, payments, advertising, subscriptions, contact forms or file-upload facility. Email links open your email application; the site does not send a message automatically. If you send an email, its address, contents and attachments are made available to the recipient and the email providers handling it, for responding to and managing that correspondence. Please do not send sensitive personal information unnecessarily.</p>
+    <h2>Hosting and technical information</h2>
+    <p>Glosso is configured for hosting on Cloudflare Workers. When Cloudflare serves the site, it processes request information such as IP addresses and requested URLs to deliver content and operate its services. Cloudflare dashboard traffic analytics can summarize these requests. Provider processing is described in <a href="https://www.cloudflare.com/policies/privacy/">Cloudflare’s privacy policy</a>; the information visible to the site operator depends on the services and settings enabled.</p>
+    <h2>Analytics</h2>
+    <p>Cloudflare Web Analytics and Cloudflare dashboard traffic analytics are the selected analytics services. The website application does not include a Web Analytics beacon; browser analytics may be enabled through Cloudflare’s hosting settings. When enabled, Web Analytics measures visits and performance. Cloudflare states that Web Analytics does not use cookies or local storage to collect usage metrics and does not fingerprint individual visitors for analytics. Hosting and security processing are separate from browser analytics.</p>
+    <h2>Cookies, fonts and external services</h2>
+    <p>The website application does not set cookies or use local storage. Fonts are hosted with the site, not loaded from Google Fonts. Cloudflare security features may use cookies depending on the configuration. See the <a href="/legal/cookies/">Cookie Policy</a>. Following external links or loading externally hosted publication media involves the relevant provider’s privacy practices.</p>
+    <h2>Storage and requests</h2>
+    <p>The static website has no database of visitor accounts or submissions and no automated mailbox-deletion system. Provider retention and any correspondence retained outside the website depend on the provider and the purpose of the correspondence; this notice does not promise a fixed deletion period. You can contact <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a> about your information or request deletion. Any applicable legal rights and obligations continue to apply.</p>
+    <h2>Submissions and changes</h2>
+    <p>Submissions are restricted to adults aged 18 or older; international adult submissions are welcome when intake is open. The current site does not provide a submission form or upload service. This policy will be updated when the site’s actual features or data practices change.</p>
+  </div></section>
 </Base>

@@ -16,10 +16,10 @@ if (type !== 'contributor') {
   published = new Date(date).toISOString();
   if (date.length === 10 && published.slice(0, 10) !== date) throw new Error('Invalid calendar date');
 }
-const fields = type === 'contributor' ? ['name: BLANK'] : type === 'work'
-  ? ['title: BLANK', 'kind: prose', 'contributors: []', `published: ${JSON.stringify(published)}`, 'summary: BLANK']
+const fields = type === 'contributor' ? ['name: BLANK', '# Optional portrait: add its path and replace portraitAlt before release.', '# portrait: /media/your-portrait.png', 'portraitAlt: BLANK'] : type === 'work'
+  ? ['title: BLANK', 'kind: prose', 'contributors: []', `published: ${JSON.stringify(published)}`, 'summary: BLANK', '# Optional cover: add its path and replace coverAlt before release.', '# cover: /media/your-image.png', 'coverAlt: BLANK', '# Optional separate browsing image:', '# thumbnail:', '#   src: /media/your-thumbnail.png', '#   alt: BLANK']
   : type === 'update' ? ['title: BLANK', 'summary: BLANK', `published: ${JSON.stringify(published)}`]
-  : ['title: BLANK', `edition: ${type === 'special' ? 'special' : 'monthly'}`, ...(type === 'issue' ? [`month: "${published.slice(0, 7)}"`] : []), `published: ${JSON.stringify(published)}`, 'description: BLANK', 'cover: BLANK', 'credits: []', 'contents: []'];
+  : ['title: BLANK', `edition: ${type === 'special' ? 'special' : 'monthly'}`, ...(type === 'issue' ? [`month: "${published.slice(0, 7)}"`] : []), `published: ${JSON.stringify(published)}`, 'description: BLANK', 'cover: BLANK', 'coverAlt: BLANK', 'credits: []', 'contents: []'];
 const file = resolve('src/content', collection, slug + '.mdx');
 await mkdir(dirname(file), { recursive: true });
 await writeFile(file, ['---', ...fields, 'approved: false', 'draft: true', '---', '', 'BLANK', ''].join('\n'), { flag: 'wx' });
