@@ -8,7 +8,7 @@ Updated 2026-09-26. Hosting target: the existing `glosso` Worker, not a new Clou
 ## Repository and static configuration
 
 - Existing repository: `https://github.com/joseph2008mercado-wq/glosso.git`; production branch: `main`. The repository is populated; the earlier empty-repository/first-push instructions are obsolete. Recheck remote state before every release; never force-push over it.
-- Astro 5 and MDX generate static files in `dist/`. Keep `output: 'static'`, canonical origin `https://glosso.org` and trailing-slash routes. No server-side rendering, Cloudflare Astro adapter or Worker JavaScript entry point is required.
+- Astro 7 and MDX generate static files in `dist/`. The owner approved the framework security upgrade; retain `compressHTML: true` and the unified Markdown processor for existing rendering behavior. Keep `output: 'static'`, canonical origin `https://glosso.org` and trailing-slash routes. No server-side rendering, Cloudflare Astro adapter or Worker JavaScript entry point is required.
 - Root `wrangler.jsonc` names `glosso`, sets compatibility date `2026-09-26`, points assets to `./dist`, and uses `not_found_handling: '404-page'`. This supplies explicit configuration so deployment need not auto-configure Astro. Missing routes should serve the generated `404.html` with HTTP 404, not a homepage fallback.
 - Cloudflare account settings, build commands, zone ownership, DNS, credentials and live deployment are not verified by the repository. A configuration file is not evidence of an active service.
 
@@ -31,7 +31,7 @@ In Cloudflare **Workers & Pages → glosso → Settings → Builds**, inspect th
 | Optional build variable | `ASTRO_TELEMETRY_DISABLED=1` |
 | Application runtime variables/secrets | None required |
 
-Keep the committed pnpm lockfile and development dependencies available for the build (`astro check` needs them). No dependency or adapter changes are necessary. Wrangler runs as a deployment tool, not as a website dependency. Verify the locked dependency installation and selected tool versions in Cloudflare's actual build log.
+Keep the committed pnpm lockfile and development dependencies available for the build (`astro check` needs them). Use the upgraded dependencies in that lockfile; no adapter is needed. Wrangler runs as a deployment tool, not as a website dependency. Verify the locked dependency installation and selected tool versions in Cloudflare's actual build log.
 
 Workers Builds manages deployment authentication separately from site code. Confirm the GitHub App has access to this repository and the build's Cloudflare deployment token has the required permissions. Do not put tokens, operator records or secrets into Git, public assets or `PUBLIC_*` variables. No R2, KV, D1, database, runtime binding or paid service is needed for the current site.
 

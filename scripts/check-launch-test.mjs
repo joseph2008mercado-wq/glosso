@@ -17,14 +17,24 @@ try {
     assert.equal(run().status, 1, `Missing ${key} must block`);
   }
   await writeFile(join(temp, 'launch-approval.json'), JSON.stringify(approval));
-  for (const text of ['<div class="legal-draft-notice">BLANK</div>', 'OPERATOR INPUT REQUIRED']) {
+  for (const text of ['<div class="legal-draft-notice">BLANK</div>', 'OPERATOR INPUT REQUIRED', '<script>window.test = true</script>', '<script data-src="/test.js">window.test = true</script>', '<script data-type="application/ld+json">window.test = true</script>']) {
     await writeFile(join(temp, 'dist/index.html'), text);
-    assert.equal(run().status, 1, 'Draft notices must still block');
+    assert.equal(run().status, 1, 'Draft notices and CSP-incompatible scripts must block');
   }
   await writeFile(join(temp, 'dist/index.html'), '<p>BLANK</p>');
   await writeFile(join(temp, 'dist/private.key'), 'fixture');
   assert.equal(run().status, 1, 'Private files must still block');
   await rm(join(temp, 'dist/private.key'));
+  for (const name of ['PRIVATE.PEM', '.dev.vars', 'bundle.js.map', 'backup.zip']) {
+    await writeFile(join(temp, 'dist', name), 'fixture');
+    assert.equal(run().status, 1, `${name} must block`);
+    await rm(join(temp, 'dist', name));
+  }
+  for (const text of ['OPERATOR INPUT REQUIRED', 'ghp_' + 'a'.repeat(36)]) {
+    await writeFile(join(temp, 'dist', 'data.json'), JSON.stringify({ value: text }));
+    assert.equal(run().status, 1, 'Private material outside HTML must block');
+    await rm(join(temp, 'dist', 'data.json'));
+  }
   await mkdir(join(temp, 'dist/private-submissions'));
   assert.equal(run().status, 1, 'Private directories must still block');
   console.log('Launch guard tests passed: owner approval, absent professional/account verification, draft markers and private-file protections.');

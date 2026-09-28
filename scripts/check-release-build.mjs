@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { pathToFileURL } from 'node:url';
 import { build } from 'astro';
 import mdx from '@astrojs/mdx';
+import { unified } from '@astrojs/markdown-remark';
 
 // An isolated, never-served build tests the real Astro loaders/MDX/media pipeline.
 // Glosso is the existing supplied proper name; all body writing remains BLANK.
@@ -37,7 +38,7 @@ try {
   await entry('writing', 'fixture-scheduled', work.replace(date, '2999-01-01T00:00:00Z').replaceAll('/media/released', '/media/scheduled'));
   await entry('updates', 'fixture-update', release + 'title: Glosso\nsummary: Glosso');
   process.chdir(sandbox);
-  await build({ root: pathToFileURL(sandbox + '/'), cacheDir: './.astro-cache', vite: { cacheDir: join(sandbox, '.vite-cache') }, configFile: false, site: 'https://glosso.org', output: 'static', trailingSlash: 'always', integrations: [mdx()], logLevel: 'error' });
+  await build({ root: pathToFileURL(sandbox + '/'), cacheDir: './.astro-cache', vite: { cacheDir: join(sandbox, '.vite-cache'), build: { assetsInlineLimit: 0 } }, configFile: false, site: 'https://glosso.org', output: 'static', trailingSlash: 'always', compressHTML: true, markdown: { processor: unified() }, integrations: [mdx()], logLevel: 'error' });
   const output = join(sandbox, 'dist');
   const html = (path) => readFile(join(output, path), 'utf8');
   const home = await html('index.html');

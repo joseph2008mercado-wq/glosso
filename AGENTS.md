@@ -27,7 +27,7 @@ This is the source for glosso.org. Build and maintain it as a contemporary indep
 
 ## Development
 
-- Astro 5, TypeScript, MDX, static output. No database, visitor accounts, ads or paid services. The owner has now selected both Cloudflare Web Analytics and Cloudflare dashboard traffic analytics for the future launch. This does not approve an engagement metric or authorize activation/deployment; verify actual configuration before describing it as installed.
+- Astro 7 (owner-approved security upgrade), TypeScript, MDX, static output. Preserve the unified Markdown pipeline and `compressHTML: true` so the upgrade does not change editorial rendering. No database, visitor accounts, ads or paid services. The owner has now selected both Cloudflare Web Analytics and Cloudflare dashboard traffic analytics for the future launch. This does not approve an engagement metric or authorize activation/deployment; verify actual configuration before describing it as installed.
 - Hosting is Cloudflare Workers Static Assets, not a new Pages project. Keep Astro static and the root `wrangler.jsonc`; no Cloudflare Astro adapter or Worker script is needed. Production build: `pnpm build:launch`; deploy: `npx wrangler deploy`; assets: `dist`; production branch: `main`. Use `pnpm build` for local verification only. Verify the guarded build in the actual Cloudflare account before pushing/merging to main; otherwise use a review PR. Preview deployments also require release safeguards and must not expose unreviewed material.
 - `pnpm dev` starts a local preview at `http://127.0.0.1:4321/`.
 - `pnpm preview` serves the production output after a build.

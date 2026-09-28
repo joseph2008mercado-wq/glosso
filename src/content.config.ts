@@ -1,6 +1,8 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection } from 'astro:content';
+import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 import { isAssetUrl } from './lib/assets';
+import { isWebsiteUrl, isUpdateUrl } from './lib/links';
 const asset = z.string().refine(isAssetUrl, 'Use an HTTPS URL or a safe absolute asset path');
 const release = { approved: z.boolean().default(false), draft: z.boolean().default(false) };
 
@@ -59,7 +61,7 @@ const contributors = defineCollection({
     portrait: asset.optional(),
     portraitAlt: z.string().optional(),
     assets: z.array(asset).default([]),
-    website: z.string().url().optional(),
+    website: z.string().refine(isWebsiteUrl, 'Use an HTTP(S) website URL without credentials').optional(),
     ...release,
   }),
 });
@@ -70,7 +72,7 @@ const updates = defineCollection({
     title: z.string(),
     summary: z.string(),
     published: z.coerce.date(),
-    href: z.string().refine((value) => /^\/(?!\/)/.test(value) || /^https:\/\//.test(value), 'Use a local path or HTTPS URL').optional(),
+    href: z.string().refine(isUpdateUrl, 'Use a local path or HTTPS URL without credentials').optional(),
     ...release,
   }),
 });

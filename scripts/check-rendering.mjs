@@ -10,7 +10,7 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 // src/pages or dist, and fixtures use only BLANK for editorial fields.
 const require = createRequire(import.meta.url);
 const astroRequire = createRequire(require.resolve('astro/package.json'));
-const { transform } = astroRequire('@astrojs/compiler');
+const { transform } = astroRequire('@astrojs/compiler-rs');
 const styles = [];
 const modules = new Map();
 async function compile(file) {
@@ -18,12 +18,11 @@ async function compile(file) {
   if (modules.has(file)) return modules.get(file);
   let source = await readFile(file, 'utf8');
   if (file.endsWith('.astro')) {
-    const result = await transform(source, { filename: pathToFileURL(file).href, internalURL: 'astro/compiler-runtime', resultScopedSlot: true, renderScript: true });
+    const result = await transform(source, { filename: pathToFileURL(file).href, internalURL: 'astro/compiler-runtime', compressHTML: true, resultScopedSlot: true, renderScript: true });
     source = result.code.replace(/^import ["'][^"']+\?astro[^"']+["'];?\s*$/gm, '');
-    // The standalone compiler emits legacy bundler metadata. These server-only
-    // components have no hydrated islands; Astro 5's container does not consume it.
+    // These server-only components have no hydrated islands or bundler metadata.
     source = source.replace(/,\s*createMetadata as \$\$createMetadata/, '')
-      .replace(/^export const \$\$metadata = .*;\s*$/gm, '');
+      .replace(/^export const \$\$metadata = \$\$createMetadata\([\s\S]*?\);\s*/m, '');
     styles.push(...result.css.map((entry) => typeof entry === 'string' ? entry : entry.code));
   }
   let code = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText;
