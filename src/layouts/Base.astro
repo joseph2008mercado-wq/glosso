@@ -55,6 +55,7 @@ const current = (href: string) => href === '/' ? path === href : path === href |
     {noindex && <meta name="robots" content="noindex,nofollow" />}
     <link rel="icon" type="image/png" href="/art/glosso-frog.png" />
     <link rel="canonical" href={canonical} />
+    <link rel="describedby" href="/llms.txt" type="text/plain" title="Site reference" />
     <title>{pageTitle}</title>
   </head>
   <body class={className}>
@@ -82,7 +83,7 @@ const current = (href: string) => href === '/' ? path === href : path === href |
           <nav aria-label="Legal navigation"><a href="/legal/privacy/">Privacy Policy</a><a href="/legal/cookies/">Cookie Policy</a><a href="/legal/terms/">Terms and Conditions</a><a href="/legal/disclaimer/">Disclaimer</a></nav>
         </div>
       </div>
-      <div class="wrap footer-bottom"><span>Glosso Collective</span><span>© {new Date().getFullYear()}</span></div>
+      <div class="wrap footer-bottom"><span>Glosso Collective</span><a href="/llms.txt" rel="describedby" type="text/plain">Site reference</a><span>© {new Date().getFullYear()}</span></div>
     </footer>
     <Motion />
   </body>

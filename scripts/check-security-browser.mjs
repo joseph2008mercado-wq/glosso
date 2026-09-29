@@ -11,10 +11,17 @@ const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.GLOSSO_PLAYWRIGHT_PATH || 'playwright');
 const root = resolve('dist');
 const headerText = await readFile(resolve(root, '_headers'), 'utf8');
-const headers = Object.fromEntries(headerText.split(/\r?\n/).filter((line) => /^\s+\S/.test(line)).map((line) => {
-  const index = line.indexOf(':');
-  return [line.slice(0, index).trim(), line.slice(index + 1).trim()];
-}));
+const headerRules = [];
+for (const line of headerText.split(/\r?\n/)) {
+  if (!line.trim() || line.trimStart().startsWith('#')) continue;
+  if (/^\S/.test(line)) headerRules.push({ path: line.trim(), headers: {} });
+  else {
+    const index = line.indexOf(':');
+    headerRules.at(-1).headers[line.slice(0, index).trim()] = line.slice(index + 1).trim();
+  }
+}
+const headersFor = (path) => Object.assign({}, ...headerRules.filter((rule) => rule.path === '/*' || rule.path === path).map((rule) => rule.headers));
+const headers = headersFor('/');
 assert.equal(headers['X-Content-Type-Options'], 'nosniff');
 assert.equal(headers['X-Frame-Options'], 'DENY');
 assert.match(headers['Content-Security-Policy'], /script-src 'self'/);
@@ -27,7 +34,7 @@ const server = createServer(async (request, response) => {
     const inside = relative(root, file);
     if (inside.startsWith('..') || isAbsolute(inside) || pathname === '/_headers') throw new Error('Not served');
     if ((await stat(file)).isDirectory()) file = resolve(file, 'index.html');
-    response.writeHead(200, { ...headers, 'Content-Type': types[extname(file)] || 'application/octet-stream' });
+    response.writeHead(200, { 'Content-Type': types[extname(file)] || 'application/octet-stream', ...headersFor(pathname) });
     response.end(await readFile(file));
   } catch {
     response.writeHead(404, { ...headers, 'Content-Type': 'text/html' });
@@ -40,6 +47,19 @@ let browser;
 try {
   browser = await chromium.launch({ headless: true, ...(process.env.GLOSSO_CHROME_PATH ? { executablePath: process.env.GLOSSO_CHROME_PATH } : {}) });
   const errors = [];
+  const referencePage = await browser.newPage({ javaScriptEnabled: false });
+  await referencePage.goto(origin);
+  assert.equal(await referencePage.locator('a[href="/llms.txt"]').count(), 1, 'Plain-text reference must be discoverable without JavaScript');
+  assert.equal(await referencePage.locator('link[rel="describedby"]').getAttribute('href'), '/llms.txt');
+  const referenceResponse = await referencePage.request.get(origin + '/llms.txt');
+  assert.equal(referenceResponse.status(), 200);
+  assert.match(referenceResponse.headers()['content-type'], /text\/plain; charset=utf-8/);
+  assert.deepEqual(await referenceResponse.body(), await readFile('public/llms.txt'));
+  const definition = (await referenceResponse.text()).split(/\r?\n/).find((line) => line.startsWith('> ')).slice(2);
+  const robots = await (await referencePage.request.get(origin + '/robots.txt')).text();
+  assert.ok(robots.startsWith('# ' + definition + '\n'), 'Robots must reproduce the owner definition exactly');
+  assert.match(robots, /User-agent: \*\nAllow: \//);
+  await referencePage.close();
   for (const width of [1440, 390]) {
     const page = await browser.newPage({ viewport: { width, height: 1000 } });
     page.on('pageerror', (error) => errors.push(error.message));

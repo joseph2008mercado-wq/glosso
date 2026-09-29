@@ -17,7 +17,7 @@ This is the source for glosso.org. Build and maintain it as a contemporary indep
 
 ## Identity
 
-- The owner expressly authorized public/llms.txt to publish their exact definition, Miami location and supplied current-mascot description. Preserve this wording; this narrow authorization does not permit generating other editorial copy or imply AI-training permission. The file is a public reference, not a guarantee of crawler ingestion or search placement.
+- The owner expressly authorized public/llms.txt to publish their exact definition, Miami location and supplied current-mascot description. The owner subsequently replaced the definition with the exact paragraph beginning "Glosso is a literary movement centered on the perfectionistic, recursive and prosodic articulation of experience." and requested it in robots.txt too. Derive the robots comment from llms.txt so they stay identical. Preserve this wording; this narrow authorization does not permit generating other editorial copy or imply AI-training permission. The file is a public reference, not a guarantee of crawler ingestion or search placement.
 - Glosso is an artistic and literary movement emphasizing oration, prosody and form in pursuit of the truest articulation of an experience. It rejects institutional and performative conventions in favor of the expressive possibilities of the individual's tongue.
 - Glosso Collective is the founding organization, based in Miami and the Tri-State area. Glosso Magazine is its independent digital and forthcoming physical publication. This description is design context, not approved site copy.
 - Do not prescribe a house aesthetic or writing style to contributors. Preserve the individuality of each work.

@@ -77,6 +77,30 @@ The repository audit reads staged/tracked bytes. Run it again after explicit sta
 
 Reference: [Workers Custom Domains](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/). No DNS or domain binding is automatically changed by the supplied Wrangler configuration.
 
+## Crawler access
+
+The owner-authored definition is maintained in `public/llms.txt` and reproduced
+verbatim as a comment in the generated `robots.txt`. The reference is linked from
+the HTML head, footer and HTTP `Link` header; it is readable without JavaScript.
+Robots comments are informational, not crawler directives. The existing wildcard
+allow rule is unchanged; this work grants no additional training permission.
+
+During the crawler investigation, the public homepage, robots and reference all
+returned 200 without a challenge for ordinary HTTP requests and requests using
+ChatGPT-User, OAI-SearchBot, Claude-User, Perplexity-User, Amazonbot and bingbot
+user-agent strings. The web-reading tool still could not open the site. Those
+requests came from the test machine, not the providers' verified networks, so they
+do not rule out IP-specific blocking, provider-side fetching failures or indexing
+delays. Cloudflare dashboard inspection required sign-in and remains unverified.
+
+If failures persist, inspect the affected requests in Cloudflare Security Events
+and AI Crawl Control before changing any settings. Identify the rule and verified
+bot or user-initiated agent involved. Do not disable general WAF/bot protection or
+allow spoofable user-agent strings globally. See [Cloudflare's verified-bot
+guidance](https://developers.cloudflare.com/bots/concepts/bot/verified-bots/).
+Repository changes cannot override edge blocks or force a provider to fetch or
+index the site. Publish through the existing guarded release workflow.
+
 ## Analytics and publication assets
 
 Both Cloudflare Web Analytics and dashboard traffic analytics were selected, not verified as activated. Inspect the actual zone/Worker and Web Analytics settings before finalizing privacy disclosures. Do not follow the old Pages-only automatic beacon instructions. If authorized, use one verified Web Analytics setup method, check the live requests/storage and avoid duplicate beacons. Confirm datasets, access, retention and regional controls; do not enable paid logging or infer a Most Read metric. Credentials belong in scoped account secrets, never public source.
